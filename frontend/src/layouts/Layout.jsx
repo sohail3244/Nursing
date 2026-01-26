@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
+import FloatingActionButtons from "../components/common/FloatingActionButtons.jsx";
 
 export default function Layout() {
   return (
@@ -10,6 +11,7 @@ export default function Layout() {
         <Outlet /> 
       </main>
       <Footer />
+      <FloatingActionButtons/>
     </div>
   );
 }
