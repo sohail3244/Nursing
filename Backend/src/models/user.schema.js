@@ -1,30 +1,40 @@
 import {
   mysqlTable,
-  timestamp,
-  foreignKey,
   varchar,
+  timestamp,
   boolean,
-  uniqueIndex,
   index,
-  text,
-} from 'drizzle-orm/mysql-core';
-import { sql } from 'drizzle-orm';
-
+  uniqueIndex,
+} from "drizzle-orm/mysql-core";
+import { sql } from "drizzle-orm";
 
 export const usersTable = mysqlTable(
-  'users',
+  "users",
   {
-    id: varchar('id', { length: 36 })
+    id: varchar("id", { length: 36 })
       .primaryKey()
       .default(sql`(UUID())`),
-    userNumber: varchar('user_number', { length: 30 }).notNull(),
 
-    firstName: varchar('first_name', { length: 100 }).notNull(),
-    lastName: varchar('last_name', { length: 100 }).notNull(),
+    username: varchar("username", { length: 100 }).notNull(),
 
+    firstName: varchar("first_name", { length: 100 }).notNull(),
+    lastName: varchar("last_name", { length: 100 }).notNull(),
 
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+    email: varchar("email", { length: 150 }).notNull(),
+    password: varchar("password", { length: 255 }).notNull(),
+
+    role: varchar("role", { length: 20 })
+      .default("admin")
+      .notNull(),
+
+    isActive: boolean("is_active").default(true),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   },
-
-)
+  (table) => ({
+    emailIndex: uniqueIndex("email_unique").on(table.email),
+    usernameIndex: uniqueIndex("username_unique").on(table.username),
+    roleIndex: index("role_index").on(table.role),
+  })
+);
