@@ -89,7 +89,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
 
                 {/* Bottom User Profile Section */}
                 
-            </aside>
+            </aside> 
         </>
     );
 };
