@@ -5,6 +5,13 @@ import helmet from 'helmet';
 
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
+import collegeRoutes from "./routes/college.route.js";
+import courseRoutes from "./routes/course.route.js";
+import blogRoutes from "./routes/blog.route.js";
+import path from "path";
+import leadRoutes from "./routes/lead.route.js";
+
+
 
 // import indexRoutes from './routes/index.js';
 
@@ -27,6 +34,11 @@ app.use(helmet());
 // app.use('/v1', indexRoutes);
 app.use('/v1/auth', authRoutes); 
 app.use('/v1/user', userRoutes); 
+app.use("/v1/college", collegeRoutes);
+app.use("/v1/course", courseRoutes);
+app.use("/v1/blog", blogRoutes);
+app.use("/v1/leads", leadRoutes);
+app.use("/uploads", express.static(path.join(process.cwd(), "src/uploads")));
 
 
 export default app;

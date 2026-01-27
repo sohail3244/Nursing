@@ -9,7 +9,7 @@
     "start": "node src/index.js",
     "db:generate": "npx drizzle-kit generate --config src/database/drizzle.config.js",
     "db:migrate": "npx drizzle-kit migrate --config src/database/drizzle.config.js",
-     "seed": "node --watch src/database/seeds/seed.js"
+    "seed": "node --watch src/database/seeds/seed.js"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +24,7 @@
     "express": "^5.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
     "mysql2": "^3.16.1",
     "seed": "^0.4.4",
     "zod": "^4.3.6"

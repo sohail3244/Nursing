@@ -10,10 +10,23 @@ import {
   ChevronDown 
 } from 'lucide-react';
 
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/slices/authSlice";
+import { useNavigate } from "react-router-dom";
+
+
 const AdminNavbar = ({ toggleSidebar }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const brandPurple = "#6739b7";
   const brandDark = "#1a237e";
+  const dispatch = useDispatch();
+const navigate = useNavigate();
+const handleLogout = () => {
+  dispatch(logout());       // Redux clear
+  localStorage.clear();     // Persist clear
+  navigate("/admin/login"); // Redirect
+};
+
 
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-40 w-full h-16 md:h-20 flex items-center px-4 md:px-8 shadow-sm">
@@ -74,9 +87,13 @@ const AdminNavbar = ({ toggleSidebar }) => {
               </NavLink>
               
               <div className="border-t border-gray-50 mt-2 pt-2">
-                <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
-                  <LogOut size={16} /> Logout
-                </button>
+                <button
+  onClick={handleLogout}
+  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
+>
+  <LogOut size={16} /> Logout
+</button>
+
               </div>
             </div>
           </div>
