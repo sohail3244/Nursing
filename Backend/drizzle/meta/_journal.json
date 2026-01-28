@@ -22,6 +22,41 @@
       "when": 1769514081725,
       "tag": "0002_panoramic_human_robot",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1769577583470,
+      "tag": "0003_tricky_sage",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1769580306726,
+      "tag": "0004_purple_ego",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1769581280144,
+      "tag": "0005_goofy_beyonder",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1769582120745,
+      "tag": "0006_messy_prism",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1769583320365,
+      "tag": "0007_calm_blindfold",
+      "breakpoints": true
     }
   ]
 }

@@ -1,12 +1,19 @@
 import { createLead, getLeads, deleteLead } from "../services/lead.service.js";
 
 export const addLead = async (req, res) => {
-  await createLead(req.body);
+  try {
+    await createLead(req.body);
 
-  res.json({
-    success: true,
-    message: "Lead added successfully",
-  });
+    res.json({
+      success: true,
+      message: "Lead added successfully",
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
 export const getAllLeads = async (req, res) => {
@@ -16,5 +23,8 @@ export const getAllLeads = async (req, res) => {
 
 export const removeLead = async (req, res) => {
   await deleteLead(req.params.id);
-  res.json({ success: true, message: "Lead deleted" });
+  res.json({
+    success: true,
+    message: "Lead deleted",
+  });
 };

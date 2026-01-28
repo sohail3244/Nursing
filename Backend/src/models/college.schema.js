@@ -4,22 +4,34 @@ import {
   int,
   timestamp,
   boolean,
+  uniqueIndex,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
-export const collegesTable = mysqlTable("colleges", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .default(sql`(UUID())`),
+export const collegesTable = mysqlTable(
+  "colleges",
+  {
+    id: varchar("id", { length: 36 })
+      .primaryKey()
+      .default(sql`(UUID())`),
 
-  name: varchar("name", { length: 255 }).notNull(),
-  city: varchar("city", { length: 100 }).notNull(),
-  state: varchar("state", { length: 100 }).notNull(),
-  type: varchar("type", { length: 50 }).notNull(), // govt / private
-  fees: int("fees").notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
 
-  isActive: boolean("is_active").default(true),
+    code: varchar("code", { length: 255 }).notNull(), // ✅ FIXED
 
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
-});
+    city: varchar("city", { length: 100 }).notNull(),
+    state: varchar("state", { length: 100 }).notNull(),
+    type: varchar("type", { length: 50 }).notNull(),
+
+     image: varchar("image", { length: 255 }),
+
+
+    isActive: boolean("is_active").default(true),
+
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+  },
+  (table) => ({
+    codeUnique: uniqueIndex("code_unique").on(table.code),
+  })
+);

@@ -10,10 +10,13 @@ export const leadsTable = mysqlTable("leads", {
   email: varchar("email", { length: 150 }),
   phone: varchar("phone", { length: 20 }).notNull(),
 
+  state: varchar("state", { length: 100 }).notNull(),
+  city: varchar("city", { length: 100 }).notNull(),
   course: varchar("course", { length: 150 }),
   college: varchar("college", { length: 150 }),
 
-  source: varchar("source", { length: 100 }).default("website"),
+ 
+ 
 
   createdAt: timestamp("created_at").defaultNow(),
 });
