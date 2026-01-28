@@ -1,40 +1,24 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios.config";
 
-// ✅ GET ALL COLLEGES
+// GET
 export const useColleges = () => {
   return useQuery({
     queryKey: ["colleges"],
     queryFn: async () => {
-      const res = await api.get("/colleges");
+      const res = await api.get("/college");
       return res.data;
     },
   });
 };
 
-
-// ✅ ADD COLLEGE (with image)
+// CREATE
 export const useAddCollege = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data) => {
-      const formData = new FormData();
-
-      formData.append("name", data.name);
-      formData.append("courseId", data.courseId);
-
-      if (data.image) {
-        formData.append("image", data.image);
-      }
-
-      const res = await api.post("/colleges", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      return res.data;
+    mutationFn: async (formData) => {
+      return api.post("/college", formData); // ✅ DIRECT
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["colleges"]);
@@ -42,29 +26,13 @@ export const useAddCollege = () => {
   });
 };
 
-
-// ✅ UPDATE COLLEGE
+// UPDATE
 export const useUpdateCollege = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ id, data }) => {
-      const formData = new FormData();
-
-      formData.append("name", data.name);
-      formData.append("courseId", data.courseId);
-
-      if (data.image) {
-        formData.append("image", data.image);
-      }
-
-      const res = await api.put(`/colleges/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      return res.data;
+      return api.put(`/college/${id}`, data); // ✅ DIRECT
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["colleges"]);
@@ -72,13 +40,12 @@ export const useUpdateCollege = () => {
   });
 };
 
-
-// ✅ DELETE COLLEGE
+// DELETE
 export const useDeleteCollege = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id) => api.delete(`/colleges/${id}`),
+    mutationFn: (id) => api.delete(`/college/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries(["colleges"]);
     },

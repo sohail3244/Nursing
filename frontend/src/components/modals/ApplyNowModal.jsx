@@ -4,9 +4,9 @@ import { useApply } from '../../hooks/useApply';
 import toast from 'react-hot-toast';
 import { useCourses } from '../../hooks/useCourse';
 import { useColleges } from '../../hooks/useCollege';
+import { X } from 'lucide-react';
 
 function ApplyNowModal({ isOpen, onClose }) {
-  // Initialize state to match createLeadSchema
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -16,178 +16,145 @@ function ApplyNowModal({ isOpen, onClose }) {
     course: '',
     college: ''
   });
-  const { data: coursesData } = useCourses();
-const { data: collegesData } = useColleges(formData.course);
-  const { mutate, isLoading } = useApply();
 
+  const { data: coursesData } = useCourses();
+  const { data: collegesData } = useColleges();
+  const { mutate, isLoading } = useApply();
 
   if (!isOpen) return null;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ 
+      ...prev, 
+      [name]: value,
+      // Reset college if course changes
+      ...(name === 'course' ? { college: '' } : {})
+    }));
   };
 
-const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.phone.length < 10) return toast.error("Please enter a valid phone number");
 
-  const payload = {
-    name: formData.name.trim(),
-    phone: formData.phone.trim(),
-    state: formData.state,
-    city: formData.city,
+    const payload = {
+      ...formData,
+      name: formData.name.trim(),
+      email: formData.email?.trim() || undefined,
+    };
 
-    // 🔥 IMPORTANT FIX
-    ...(formData.email && { email: formData.email.trim() }),
-    ...(formData.course && { course: formData.course.trim() }),
-    ...(formData.college && { college: formData.college.trim() }),
+    mutate(payload, {
+      onSuccess: () => {
+        toast.success("Application submitted successfully");
+        onClose();
+        setFormData({ name: "", phone: "", email: "", state: "", city: "", course: "", college: "" });
+      },
+      onError: (err) => toast.error(err.response?.data?.message || "Something went wrong")
+    });
   };
 
-
-  mutate(payload, {
-    onSuccess: () => {
-       toast.success("Application submitted successfully ");
-      onClose();
-      setFormData({
-        name: "",
-        phone: "",
-        email: "",
-        state: "",
-        city: "",
-        course: "",
-        college: "",
-      });
-    },
-    onError: (err) => {
-      console.error("API ERROR:", err.response?.data || err);
-      toast.error("Something went wrong ");
-    }
-  });
-};
-
+  // Reusable Input Class
+  const inputClass = "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#6739b7] focus:border-transparent outline-none transition-all duration-200 text-gray-800 placeholder:text-gray-400";
+  const labelClass = "text-xs font-bold text-[#1a237e] uppercase tracking-wider ml-1 mb-1 block";
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={onClose}></div>
 
-      <div className="relative bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[2.5rem] shadow-2xl animate-in fade-in zoom-in duration-300">
+      <div className="relative bg-white w-full max-w-lg max-h-[95vh] overflow-hidden rounded-[2rem] shadow-2xl">
 
+        
         {/* Header */}
-        <div className="relative pt-10 pb-6 text-center">
-          <button onClick={onClose} className="absolute top-6 right-8 text-gray-400 hover:text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+        <div className="sticky top-0 bg-white z-10 pt-8 pb-4 text-center border-b border-gray-50">
+          <button onClick={onClose} className="absolute top-4 right-6 text-gray-400 hover:text-gray-600 transition-colors">
+            <X className="h-7 w-7" />
           </button>
-          <span className="bg-indigo-50 text-[#6739b7] px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider">Apply Now</span>
-          <h2 className="mt-4 text-2xl font-extrabold text-[#1a237e]">Interested? Send Us An Enquiry</h2>
+          <span className="bg-indigo-50 text-[#6739b7] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">Apply Now</span>
+          <h2 className="mt-2 text-2xl font-black text-[#1a237e]">Start Your Journey</h2>
         </div>
 
-        <form className="px-8 md:px-12 pb-10 space-y-4" onSubmit={handleSubmit}>
+        <form className="p-8 space-y-5" onSubmit={handleSubmit}>
+          
+          {/* Full Name */}
+          <div>
+            <label className={labelClass}>Full Name *</label>
+            <input name="name" required minLength={3} value={formData.name} onChange={handleChange}
+              placeholder="Enter your full name" className={inputClass} />
+          </div>
 
-          {/* Name */}
-          <div className="grid grid-cols-1 gap-4">
-            <div className="space-y-1">
-              <label className="text-sm font-bold text-gray-700 ml-1">Full Name *</label>
-              <input name="name" required minLength={3} value={formData.name} onChange={handleChange}
-                placeholder="Your Name" className="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#6739b7] outline-none" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Phone */}
+            <div>
+              <label className={labelClass}>Phone Number *</label>
+              <input type="tel" maxLength={10} required value={formData.phone}
+                onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, "")})}
+                placeholder="10-digit number" className={inputClass} />
             </div>
-
-            {/* Phone & Email */}
-            <div className="space-y-1">
-              <label className="text-sm font-bold text-gray-700 ml-1">Contact Number *</label>
-              <input
-  type="tel"
-  inputMode="numeric"
-  maxLength={10}
-  value={formData.phone}
-  onChange={(e) =>
-    setFormData({
-      ...formData,
-      phone: e.target.value.replace(/\D/g, "")
-    })
-  }
-  placeholder="Phone Number"
-  className="w-full px-5 py-3 rounded-xl"
-/>
-
-
-
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-sm font-bold text-gray-700 ml-1">Email</label>
+            {/* Email */}
+            <div>
+              <label className={labelClass}>Email Address</label>
               <input name="email" type="email" value={formData.email} onChange={handleChange}
-                placeholder="Your Email" className="w-full px-5 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#6739b7] outline-none" />
+                placeholder="Email (optional)" className={inputClass} />
             </div>
+          </div>
 
-            {/* State & City (Required by Schema) */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-sm font-bold text-gray-700 ml-1">State *</label>
-                <select name="state" required value={formData.state} onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm outline-none">
-                  <option value="">Select State</option>
-                  <option value="Delhi">Delhi</option>
-                  <option value="Rajasthan">Rajasthan</option>
-                </select>
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-bold text-gray-700 ml-1">City *</label>
-                <input name="city" required value={formData.city} onChange={handleChange}
-                  placeholder="City" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm outline-none" />
-              </div>
+          <div className="grid grid-cols-2 gap-4">
+            {/* State */}
+            <div>
+              <label className={labelClass}>State *</label>
+              <select name="state" required value={formData.state} onChange={handleChange} className={inputClass}>
+                <option value="">Select</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Rajasthan">Rajasthan</option>
+              </select>
             </div>
-
-            {/* Course & College (Optional) */}
-            <div className="space-y-1">
-              <label className="text-sm font-bold text-gray-700 ml-1">Course</label>
-              <select
-  name="course"
-  value={formData.course}
-  onChange={handleChange}
-  className="w-full px-5 py-3 bg-gray-50 border rounded-xl"
->
-  <option value="">Select Course</option>
-
-  {coursesData?.data?.map((course) => (
-    <option key={course._id} value={course._id}>
-      {course.name}
-    </option>
-  ))}
-</select>
-
+            {/* City */}
+            <div>
+              <label className={labelClass}>City *</label>
+              <input name="city" required value={formData.city} onChange={handleChange}
+                placeholder="Your City" className={inputClass} />
             </div>
+          </div>
 
-            <div className="space-y-1">
-              <label className="text-sm font-bold text-gray-700 ml-1">College</label>
-              <select
-  name="college"
-  value={formData.college}
-  onChange={handleChange}
-  className="w-full px-5 py-3 bg-gray-50 border rounded-xl"
-  disabled={!formData.course}
->
-  <option value="">Select College</option>
+          <hr className="border-gray-100 my-2" />
 
-  {collegesData?.data?.map((college) => (
-    <option key={college._id} value={college._id}>
-      {college.name}
-    </option>
-  ))}
-</select>
+          {/* Course Select */}
+          <div>
+            <label className={labelClass}>Preferred Course</label>
+            <select name="course" value={formData.course} onChange={handleChange} className={inputClass}>
+              <option value="">Select a Course</option>
+              {coursesData?.data?.map((course) => (
+                <option key={course.id} value={course.id}>{course.name}</option>
+              ))}
+            </select>
+          </div>
 
-            </div>
+          {/* College Select */}
+          <div>
+            <label className={labelClass}>Preferred College</label>
+            <select 
+              name="college" 
+              value={formData.college} 
+              onChange={handleChange} 
+              disabled={!formData.course}
+              className={`${inputClass} ${!formData.course ? 'opacity-50 cursor-not-allowed bg-gray-100' : ''}`}
+            >
+              <option value="">{formData.course ? "Select a College" : "Select course first"}</option>
+              {collegesData?.data?.map((college) => (
+                <option key={college.id} value={college.id}>{college.name}</option>
+              ))}
+            </select>
           </div>
 
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 rounded-xl text-lg shadow-xl mt-4"
+            className="w-full py-4 rounded-2xl text-white font-bold text-lg shadow-lg shadow-indigo-200 transition-all active:scale-95 bg-[#6739b7] hover:bg-[#5a32a3]"
           >
-            {isLoading ? "Submitting..." : "Submit Application"}
+            {isLoading ? "Processing..." : "Submit Inquiry"}
           </Button>
-
+          
+          <p className="text-center text-[10px] text-gray-400">By submitting, you agree to our terms and privacy policy.</p>
         </form>
       </div>
     </div>

@@ -1,38 +1,31 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios.config";
 
-
-// ✅ Get All Courses (Admin / Public)
+/* ==============================
+   ✅ GET ALL COURSES (PUBLIC)
+================================ */
 export const useCourses = () => {
   return useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
-      const res = await api.get("/courses");
+      const res = await api.get("/course");
       return res.data;
     },
   });
 };
 
 
-// ✅ Get Courses by College
-export const useCoursesByCollege = (collegeId) => {
-  return useQuery({
-    queryKey: ["courses", collegeId],
-    queryFn: async () => {
-      const res = await api.get(`/courses/college/${collegeId}`);
-      return res.data;
-    },
-    enabled: !!collegeId, // only run when id exists
-  });
-};
-
-
-// ✅ Add Course (Admin)
+/* ==============================
+   ✅ ADD COURSE (ADMIN)
+================================ */
 export const useAddCourse = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data) => api.post("/courses", data),
+    mutationFn: async (data) => {
+      const res = await api.post("/course", data);
+      return res.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(["courses"]);
     },
@@ -40,13 +33,17 @@ export const useAddCourse = () => {
 };
 
 
-// ✅ Update Course
+/* ==============================
+   ✅ UPDATE COURSE (ADMIN)
+================================ */
 export const useUpdateCourse = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }) =>
-      api.put(`/courses/${id}`, data),
+    mutationFn: async ({ id, data }) => {
+      const res = await api.put(`/course/${id}`, data);
+      return res.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(["courses"]);
     },
@@ -54,12 +51,16 @@ export const useUpdateCourse = () => {
 };
 
 
-// ✅ Delete Course
+/* ==============================
+   ✅ DELETE COURSE (ADMIN)
+================================ */
 export const useDeleteCourse = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id) => api.delete(`/courses/${id}`),
+    mutationFn: async (id) => {
+      return api.delete(`/course/${id}`);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(["courses"]);
     },

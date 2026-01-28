@@ -32,7 +32,7 @@ router.put(
   editCollege
 );
 
-router.get("/", verifyToken, getColleges);
+router.get("/",  getColleges);
 router.delete("/:id", verifyToken, isAdmin, checkCollegeExists, removeCollege);
 
 export default router;

@@ -12,7 +12,6 @@ router.post(
   verifyToken,
   isAdmin,
   upload("blogs").single("image"), // ✅ direct multer
-  validate(createBlogSchema),
   addBlog
 );
 

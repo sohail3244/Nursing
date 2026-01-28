@@ -22,7 +22,7 @@ router.post(
   addCourse
 );
 
-router.get("/", verifyToken, getAllCourses);
+router.get("/",  getAllCourses);
 
 router.get(
   "/college/:collegeId",
