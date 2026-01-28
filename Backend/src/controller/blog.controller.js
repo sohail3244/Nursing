@@ -5,6 +5,7 @@ export const addBlog = async (req, res) => {
 
   await createBlog({
     title: req.body.title,
+    code: req.body.code,
     description: req.body.description,
     image,
   });

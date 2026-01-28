@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import Button from '../../components/common/Button';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const brandColor = "#6739b7"; // Matching your Home.jsx theme
     const { mutate, isLoading, error } = useAuth();
+    const [showPassword, setShowPassword] = useState(false);
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         mutate({
             email,
             password,
@@ -54,14 +56,23 @@ const Login = () => {
                         {/* Password Field */}
                         <div className="flex flex-col gap-2">
                             <label className="text-sm font-semibold text-gray-700 ml-1">Password</label>
-                            <input
-                                type="password"
-                                required
-                                className="w-full px-5 py-3 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all duration-300"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    required
+                                    className="w-full px-5 py-3 pr-12 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all duration-300"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#6739b7]"
+                                >
+                                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                </button>
+                            </div>
                         </div>
 
                         {/* Submit Button */}

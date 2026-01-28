@@ -1,22 +1,76 @@
-import { createCollege, deleteCollege, getAllColleges, updateCollege } from "../services/college.service.js";
-
+import {
+  createCollege,
+  deleteCollege,
+  getAllColleges,
+  updateCollege,
+} from "../services/college.service.js";
 
 export async function addCollege(req, res) {
-  await createCollege(req.body);
-  res.json({ success: true, message: "College added" });
+  try {
+    const image = req.file ? req.file.filename : null;
+
+    await createCollege({
+      ...req.body,
+      image,
+    });
+
+    res.json({
+      success: true,
+      message: "College added successfully",
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
 
 export async function getColleges(req, res) {
-  const data = await getAllColleges();
-  res.json({ success: true, data });
+  try {
+    const data = await getAllColleges();
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch colleges",
+    });
+  }
 }
 
 export async function editCollege(req, res) {
-  await updateCollege(req.params.id, req.body);
-  res.json({ success: true, message: "College updated" });
+  try {
+    const image = req.file ? req.file.filename : null;
+
+    await updateCollege(req.params.id, {
+      ...req.body,
+      ...(image && { image }),
+    });
+
+    res.json({
+      success: true,
+      message: "College updated successfully",
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
 
 export async function removeCollege(req, res) {
-  await deleteCollege(req.params.id);
-  res.json({ success: true, message: "College deleted" });
+  try {
+    await deleteCollege(req.params.id);
+
+    res.json({
+      success: true,
+      message: "College deleted successfully",
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }

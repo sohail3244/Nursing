@@ -3,6 +3,16 @@ import { blogsTable } from "../models/blog.schema.js";
 import { eq } from "drizzle-orm";
 
 export const createBlog = async (data) => {
+  // 🔍 check duplicate code
+  const existing = await db
+    .select()
+    .from(blogsTable)
+    .where(eq(blogsTable.code, data.code));
+
+  if (existing.length > 0) {
+    throw new Error("Blog with this code already exists");
+  }
+
   return await db.insert(blogsTable).values(data);
 };
 

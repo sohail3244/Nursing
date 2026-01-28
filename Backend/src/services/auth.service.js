@@ -6,7 +6,6 @@ import { usersTable } from "../models/user.schema.js";
 import { db } from "../database/db.js";
 
 export async function loginService({ email, password }) {
-  console.log(email, password);
   
   const users = await db
     .select()

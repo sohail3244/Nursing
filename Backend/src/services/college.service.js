@@ -3,6 +3,17 @@ import { eq } from "drizzle-orm";
 import { collegesTable } from "../models/college.schema.js";
 
 export async function createCollege(data) {
+  // 🔍 Check duplicate college code
+  const existing = await db
+    .select()
+    .from(collegesTable)
+    .where(eq(collegesTable.code, data.code));
+
+  if (existing.length > 0) {
+    throw new Error("College code already exists");
+  }
+
+  
   await db.insert(collegesTable).values(data);
 }
 

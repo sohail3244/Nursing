@@ -12,10 +12,17 @@ import Contact from "./pages/PublicPages/Contact";
 import PrivacyPolicy from "./pages/PublicPages/PrivacyPolicy";
 import PopularColleges from "./pages/PublicPages/PopularColleges";
 import PopularCourses from "./pages/PublicPages/PopularCourses";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
+    <>
+    <Toaster
+        position="top-right"
+        reverseOrder={false}
+      />
     <Routes>
+      
       {/* 🌐 PUBLIC ROUTES */}
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
@@ -32,6 +39,7 @@ function App() {
       {/* 🔐 ADMIN ROUTES */}
       <Route path="/admin/*" element={<AdminRoutes />} />
     </Routes>
+    </>
   );
 }
 

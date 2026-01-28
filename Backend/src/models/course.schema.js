@@ -4,23 +4,32 @@ import {
   int,
   timestamp,
   boolean,
+  uniqueIndex,
 } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
-export const coursesTable = mysqlTable("courses", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .default(sql`(UUID())`),
+export const coursesTable = mysqlTable(
+  "courses",
+  {
+    id: varchar("id", { length: 36 })
+      .primaryKey()
+      .default(sql`(UUID())`),
 
-  collegeId: varchar("college_id", { length: 36 }).notNull(),
+    collegeId: varchar("college_id", { length: 36 }).notNull(),
 
-  name: varchar("name", { length: 255 }).notNull(),
-  duration: varchar("duration", { length: 50 }).notNull(), // 4 Years
-  fees: int("fees").notNull(),
-  eligibility: varchar("eligibility", { length: 255 }),
+    name: varchar("name", { length: 255 }).notNull(),
 
-  isActive: boolean("is_active").default(true),
+    code: varchar("code", { length: 100 }).notNull(), // ✅ UNIQUE CODE
 
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
-});
+    duration: varchar("duration", { length: 50 }).notNull(),
+    eligibility: varchar("eligibility", { length: 255 }),
+
+    isActive: boolean("is_active").default(true),
+
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+  },
+  (table) => ({
+    courseCodeUnique: uniqueIndex("course_code_unique").on(table.code),
+  })
+);
