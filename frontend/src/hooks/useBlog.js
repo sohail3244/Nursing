@@ -23,14 +23,16 @@ export const useAddBlog = () => {
 
   return useMutation({
     mutationFn: async (formData) => {
-      const res = await api.post("/blog", formData);
-      return res.data;
+      return await api.post("/blog", formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["blogs"]);
     },
   });
 };
+
+
+
 
 
 /* ==============================
@@ -57,6 +59,7 @@ export const useUpdateBlog = () => {
     mutationFn: async ({ id, data }) => {
       const formData = new FormData();
       formData.append("title", data.title);
+      formData.append("code", data.code);
       formData.append("description", data.description);
 
       if (data.image) {

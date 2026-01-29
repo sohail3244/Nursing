@@ -1,37 +1,37 @@
-import {
-  mysqlTable,
-  varchar,
-  int,
-  timestamp,
-  boolean,
-  uniqueIndex,
-} from "drizzle-orm/mysql-core";
+import { mysqlTable, varchar, text, int, json, timestamp } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
-export const collegesTable = mysqlTable(
-  "colleges",
-  {
-    id: varchar("id", { length: 36 })
-      .primaryKey()
-      .default(sql`(UUID())`),
+export const collegesTable = mysqlTable("colleges", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .default(sql`(UUID())`),
 
-    name: varchar("name", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  code: varchar("code", { length: 255 }).notNull().unique(),
 
-    code: varchar("code", { length: 255 }).notNull(), // ✅ FIXED
+  description: text("description"),
 
-    city: varchar("city", { length: 100 }).notNull(),
-    state: varchar("state", { length: 100 }).notNull(),
-    type: varchar("type", { length: 50 }).notNull(),
+  sector: varchar("sector", { length: 100 }),
+  establishedYear: int("established_year"),
+  genderAcceptance: varchar("gender_acceptance", { length: 50 }),
 
-     image: varchar("image", { length: 255 }),
+  state: varchar("state", { length: 100 }),
+  district: varchar("district", { length: 100 }),
+  city: varchar("city", { length: 100 }),
+  address: text("address"),
 
+  googleMapLink: text("google_map_link"),
 
-    isActive: boolean("is_active").default(true),
+  affiliation: text("affiliation"),
+  approvedBy: text("approved_by"),
 
-    createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
-  },
-  (table) => ({
-    codeUnique: uniqueIndex("code_unique").on(table.code),
-  })
-);
+  coursesCount: int("courses_count"),
+  experienceYears: int("experience_years"),
+
+  facilities: json("facilities"),  
+
+  thumbnail: varchar("thumbnail", { length: 255 }),
+  gallery: json("gallery"),
+
+  createdAt: timestamp("created_at").defaultNow(),
+});

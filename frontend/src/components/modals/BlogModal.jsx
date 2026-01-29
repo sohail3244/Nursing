@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { X, FileText, Image as ImageIcon, Loader2, Trash2 } from 'lucide-react';
+import { useRef } from "react";
+
 
 function BlogModal({ isOpen, onClose, onSubmit, editingBlog, isLoading }) {
+  const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [formData, setFormData] = useState({
@@ -11,20 +14,18 @@ function BlogModal({ isOpen, onClose, onSubmit, editingBlog, isLoading }) {
   });
 
   // Jab Modal khule ya editingBlog change ho
-  useEffect(() => {
-    if (editingBlog) {
-      setFormData({
-        title: editingBlog.title || '',
-        code: editingBlog.code || '',
-        description: editingBlog.description || ''
-      });
-      setPreviewUrl(editingBlog.image || null);
-    } else {
-      setFormData({ title: '', code: '', description: '' });
-      setPreviewUrl(null);
-    }
-    setSelectedFile(null);
-  }, [editingBlog, isOpen]);
+ useEffect(() => {
+  if (!isOpen) return;
+
+  if (editingBlog) {
+    setFormData({
+      title: editingBlog.title || "",
+      code: editingBlog.code || "",
+      description: editingBlog.description || "",
+    });
+    setPreviewUrl(editingBlog.image || null);
+  }
+}, [editingBlog, isOpen]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -34,16 +35,29 @@ function BlogModal({ isOpen, onClose, onSubmit, editingBlog, isLoading }) {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const data = new FormData();
-    data.append('title', formData.title);
-    data.append('code', formData.code);
-    data.append('description', formData.description);
-    if (selectedFile) data.append('image', selectedFile);
-    
-    onSubmit(data);
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const data = new FormData();
+  data.append("title", formData.title);
+  data.append("code", formData.code);
+  data.append("description", formData.description);
+
+  if (selectedFile) {
+    data.append("image", selectedFile);
+  }
+
+  await onSubmit(data); // 🔥 await MUST
+
+  // reset
+  setFormData({ title: "", code: "", description: "" });
+  setSelectedFile(null);
+  setPreviewUrl(null);
+};
+
+
+
+
 
   if (!isOpen) return null;
 
@@ -101,7 +115,7 @@ function BlogModal({ isOpen, onClose, onSubmit, editingBlog, isLoading }) {
                   <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-100 border-dashed rounded-2xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
                     <ImageIcon size={24} className="text-gray-300 mb-2" />
                     <p className="text-xs text-gray-500 font-medium">Upload thumbnail image</p>
-                    <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                    <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
                   </label>
                 )}
               </div>

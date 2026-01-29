@@ -13,6 +13,7 @@ import PrivacyPolicy from "./pages/PublicPages/PrivacyPolicy";
 import PopularColleges from "./pages/PublicPages/PopularColleges";
 import PopularCourses from "./pages/PublicPages/PopularCourses";
 import { Toaster } from "react-hot-toast";
+import CollegeDetails from "./pages/PublicPages/collegeDetails";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
         <Route path="popular-colleges" element={<PopularColleges />} />
         <Route path="popular-courses" element={<PopularCourses />} />
+        <Route path="college-details" element={<CollegeDetails />} />
       </Route>
 
       {/* 🔐 ADMIN ROUTES */}

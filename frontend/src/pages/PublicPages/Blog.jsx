@@ -1,42 +1,23 @@
 import React from 'react';
 import { Home, ChevronRight, LayoutGrid } from 'lucide-react'; // Using lucide-react as requested
+import { useBlogs } from '../../hooks/useBlog';
 
 const Blog = () => {
   const brandColor = "#6739b7";
   const brandDark = "#1a237e";
+  const { data, isLoading } = useBlogs();
+
   
   // Category list based on UI
   const categories = [
-    { name: "Malayalam Blogs", active: true },
+    { name: " Blogs", active: true },
     { name: "Nursing Career", active: false },
     { name: "Entrance Exams", active: false },
     { name: "Admission Tips", active: false },
     { name: "Top Colleges", active: false },
   ];
 
-  const blogPosts = [
-    {
-      id: 1,
-      image: "https://lh3.googleusercontent.com/gps-cs-s/AG0ilSypVQHvvNB1XbyKGXPXW7O2em5wmiQNLMHcVvR8LHs5d3Ao9fnwHBuJ0OHX5BzUt0q9p1ryqu5tG9reKKTnCk7KFHacJLUJLaQgq8c-635JsIt7awrQa4xnIMDkY44P6Z5YWHgf=s680-w680-h510-rw",
-      tag: "Latest Updates",
-      title: "Everything You Need to Know About B.Sc Nursing Admission 2025-26",
-      description: "B.Sc Nursing admissions in Kerala for the academic year 2025-26 are starting soon...",
-    },
-    {
-      id: 2,
-      image: "https://images.unsplash.com/20/cambridge.JPG?q=80&w=1147&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      tag: "Career Guidance",
-      title: "Opportunities for Non-Science Students in Nursing Courses",
-      description: "Explore how students from non-science backgrounds can still pursue GNM and other diploma courses...",
-    },
-    {
-      id: 3,
-      image: "https://images.unsplash.com/photo-1607013407627-6ee814329547?q=80&w=964&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      tag: "Global Opportunities",
-      title: "Nursing Careers and Global Job Opportunities Explained",
-      description: "Understand the growing demand for nursing professionals and international job prospects...",
-    },
-  ];
+ 
 
   return (
     <div className="bg-[#fbf9ff] min-h-screen font-sans pb-20">
@@ -90,18 +71,20 @@ const Blog = () => {
 
         {/* 3. Blog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogPosts.map((post) => (
+          {data?.data?.map((post) => (
+
             <article 
               key={post.id} 
               className="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-50 transition-all hover:scale-[1.02] hover:shadow-2xl cursor-pointer group"
             >
               {/* Image Container */}
               <div className="h-60 overflow-hidden p-3">
-                <img 
-                  src={post.image} 
-                  alt={post.title} 
-                  className="w-full h-full object-cover rounded-[1.5rem] transition-transform duration-500 group-hover:scale-110"
-                />
+                <img
+  src={`${import.meta.env.VITE_API_BASE_URL}/uploads/blogs/${post.image}`}
+  alt={post.title}
+  className="w-full h-full object-cover rounded-[1.5rem]"
+/>
+
               </div>
 
               {/* Content */}

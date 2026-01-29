@@ -3,7 +3,8 @@ import {
   addCollege,
   getColleges,
   editCollege,
-  removeCollege,
+  deleteCollege,
+  getCollegeById,
 } from "../controller/college.controller.js";
 
 import { verifyToken, isAdmin } from "../middlewares/auth.middleware.js";
@@ -18,8 +19,11 @@ router.post(
   "/",
   verifyToken,
   isAdmin,
-  upload("colleges").single("image"), // ✅ YAHAN
-  validate(createCollegeSchema),
+  upload("colleges").fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "gallery", maxCount: 10 },
+  ]),
+  
   addCollege
 );
 
@@ -27,12 +31,16 @@ router.put(
   "/:id",
   verifyToken,
   isAdmin,
-  upload("colleges").single("image"), // ✅ YAHAN
+  upload("colleges").fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "gallery", maxCount: 10 },
+  ]),
   checkCollegeExists,
   editCollege
 );
 
 router.get("/",  getColleges);
-router.delete("/:id", verifyToken, isAdmin, checkCollegeExists, removeCollege);
+router.get("/:id", getCollegeById);
+router.delete("/:id", verifyToken, isAdmin, checkCollegeExists, deleteCollege);
 
 export default router;
