@@ -1,130 +1,157 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { MapPin, Calendar, Globe, CheckCircle, ArrowLeft, GraduationCap, Building2, Users, LayoutGrid, Info } from 'lucide-react';
+import React from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  MapPin, Calendar, GraduationCap, Building2, Info, Hash,
+  CheckCircle2, Globe, ShieldCheck, UserCheck, ArrowLeft,
+  PlayCircle, Users, LayoutGrid, GraduationCap as ExperienceIcon
+} from "lucide-react";
+import { useCollegeById } from "../../hooks/useCollege";
 
 const CollegeDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-  // Safeguard for data structure
+  const { data, isLoading, isError } = useCollegeById(id);
   const college = data?.data || data;
 
-  if (isLoading) return <div className="h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#6739b7]"></div></div>;
-  if (isError || !college) return <div className="text-center py-20">College data not found.</div>;
+  // 🔥 ERROR FIX: String data ko Array mein convert karne ka function
+  const ensureArray = (data) => {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (typeof data === "string") {
+      // Agar data JSON string hai toh parse karein, warna comma se split karein
+      try {
+        const parsed = JSON.parse(data);
+        return Array.isArray(parsed) ? parsed : [parsed];
+      } catch (e) {
+        return data.split(",").map((item) => item.trim());
+      }
+    }
+    return [];
+  };
+
+  const facilities = ensureArray(college?.facilities);
+  const gallery = ensureArray(college?.gallery);
+
+  if (isLoading) return (
+    <div className="h-screen flex items-center justify-center bg-white">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#6739b7]"></div>
+    </div>
+  );
+
+  if (!college || isError) return <div className="text-center py-20">College not found</div>;
 
   return (
-    <div className="bg-[#f4f7fe] min-h-screen font-sans pb-20">
-      {/* 1. Header Banner Area */}
-      <div className="relative h-64 md:h-80 w-full overflow-hidden">
-        <img 
-          src={`${baseUrl}/uploads/colleges/${college.thumbnail}`} 
-          className="w-full h-full object-cover" 
-          alt="banner" 
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1a237e]/80 to-transparent" />
-        <button 
-          onClick={() => navigate(-1)}
-          className="absolute top-6 left-6 bg-white/20 backdrop-blur-md p-2 rounded-full text-white hover:bg-white hover:text-black transition-all"
-        >
-          <ArrowLeft size={24} />
-        </button>
-      </div>
+    <div className="bg-white min-h-screen pb-20 font-sans text-gray-800">
+      
+      {/* 1. Banner Area (As per image_17b31c.png) */}
+      <div className="max-w-7xl mx-auto px-4 pt-4">
+        <div className="relative h-[250px] md:h-[400px] rounded-xl overflow-hidden shadow-md">
+          <img
+            src={college.thumbnail ? `${baseUrl}/uploads/colleges/${college.thumbnail}` : "/placeholder.jpg"}
+            className="w-full h-full object-cover"
+            alt="Banner"
+          />
+        </div>
 
-      {/* 2. Title & Action Bar */}
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="bg-white rounded-3xl p-8 -mt-20 relative z-10 shadow-xl border border-gray-100">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div className="flex gap-6 items-center">
-              {/* Profile/Logo Image */}
-              <div className="w-24 h-24 rounded-2xl bg-white border-4 border-white shadow-lg overflow-hidden shrink-0">
-                 <img src={`${baseUrl}/uploads/colleges/${college.thumbnail}`} className="w-full h-full object-cover" alt="logo" />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-4xl font-black text-[#1a237e] tracking-tight">{college.name}</h1>
-                <div className="flex flex-wrap items-center gap-4 mt-2 text-gray-500 font-medium">
-                  <span className="flex items-center gap-1"><MapPin size={16} className="text-[#6739b7]"/> {college.city}, {college.state}</span>
-                  <span className="bg-purple-50 text-[#6739b7] px-3 py-1 rounded-full text-xs font-bold uppercase">{college.sector}</span>
-                </div>
-              </div>
+        {/* 2. Header Info & Action Buttons */}
+        <div className="mt-8 flex flex-col md:flex-row justify-between items-start gap-6 border-b pb-8">
+          <div className="flex-1">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#1a237e]">
+              {college.name} – {college.city}
+            </h1>
+            <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-500 font-medium">
+              <span className="flex items-center gap-1"><MapPin size={16} className="text-[#6739b7]"/> {college.city}, {college.state}</span>
             </div>
-            <div className="flex gap-3 w-full md:w-auto">
-              <button className="flex-1 md:flex-none bg-[#6739b7] text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-purple-200 hover:scale-105 transition-all">Online Admission</button>
-              <button className="flex-1 md:flex-none border-2 border-gray-100 text-[#1a237e] px-8 py-3 rounded-xl font-bold hover:bg-gray-50 transition-all">Check Approvals</button>
-            </div>
+            <p className="mt-4 text-gray-600 text-sm leading-relaxed max-w-5xl italic">
+              {college.description?.substring(0, 250)}...
+            </p>
           </div>
-
-          {/* 3. Quick Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10 pt-10 border-t border-gray-50">
-            <StatBox icon={<Users className="text-blue-500"/>} label="Students" value="1200+" />
-            <StatBox icon={<Calendar className="text-orange-500"/>} label="Est. Year" value={college.establishedYear} />
-            <StatBox icon={<GraduationCap className="text-purple-500"/>} label="Courses" value={`${college.coursesCount}+`} />
-            <StatBox icon={<Building2 className="text-green-500"/>} label="Experience" value={`${college.experienceYears || '10+'} Yrs`} />
+          
+          <div className="flex flex-col gap-3 w-full md:w-auto">
+            <button className="bg-[#4169E1] text-white px-10 py-2.5 rounded shadow hover:bg-blue-700 font-bold text-sm">
+              Online Admission
+            </button>
+            <button className="border border-emerald-500 text-emerald-600 px-10 py-2.5 rounded font-bold text-sm hover:bg-emerald-50">
+              Check Approvals
+            </button>
           </div>
         </div>
 
-        {/* 4. Main Content Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10">
-          
-          {/* Left Column: About & Gallery */}
-          <div className="lg:col-span-2 space-y-8">
-            <section className="bg-white rounded-3xl p-8 shadow-sm border border-gray-50">
-              <h2 className="text-xl font-black text-[#1a237e] mb-6 flex items-center gap-2">
-                <Info size={20} className="text-[#6739b7]"/> About the Institution
-              </h2>
-              <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">
-                {college.description}
-              </p>
+        {/* 3. Central Icon Stats */}
+        <div className="grid grid-cols-3 gap-4 py-12 max-w-3xl mx-auto">
+          <CenterStat icon={<Users className="text-[#4169E1]/70" size={40}/>} value="252 +" label="Students" />
+          <CenterStat icon={<ExperienceIcon className="text-[#4169E1]/70" size={40}/>} value={`${college.experienceYears || '0'} +`} label="Years Experience" />
+          <CenterStat icon={<LayoutGrid className="text-[#4169E1]/70" size={40}/>} value={`${college.coursesCount || '0'} +`} label="Courses" />
+        </div>
 
-              {/* Facilities from JSON */}
-              <div className="mt-10">
-                <h3 className="font-bold text-[#1a237e] mb-4">Campus Facilities</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {college.facilities?.map((item, i) => (
-                    <div key={i} className="flex items-center gap-2 text-gray-600 font-medium">
-                      <CheckCircle size={16} className="text-green-500" /> {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
+        {/* 4. Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mt-6">
+          
+          {/* Main (8 Cols) */}
+          <div className="lg:col-span-8 space-y-12">
+            <section>
+              <h2 className="text-2xl font-bold text-[#1a237e] mb-4">About {college.name}</h2>
+              <p className="text-gray-600 leading-relaxed text-justify">{college.description}</p>
             </section>
 
-            {/* Gallery Section */}
-            <section className="bg-white rounded-3xl p-8 shadow-sm border border-gray-50">
-              <h2 className="text-xl font-black text-[#1a237e] mb-6 flex items-center gap-2">
-                <LayoutGrid size={20} className="text-[#6739b7]"/> Campus Gallery
+            {/* Highlights Section */}
+            <section>
+              <h2 className="text-xl font-bold text-[#1a237e] mb-6 border-b-2 border-orange-400 inline-block pb-1">
+                Highlights of {college.name}
               </h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {college.gallery?.map((img, i) => (
-                  <div key={i} className="h-40 rounded-2xl overflow-hidden hover:opacity-90 cursor-pointer transition-all shadow-sm border border-gray-100">
-                    <img src={`${baseUrl}/uploads/colleges/${img}`} className="w-full h-full object-cover" alt="campus" />
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-y-3">
+                {facilities.map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                    <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> {f}
                   </div>
                 ))}
               </div>
             </section>
+
+            {/* Video Section (Placeholder like image) */}
+            <div className="relative group rounded-xl overflow-hidden shadow-xl aspect-video bg-black">
+               <img src={college.thumbnail ? `${baseUrl}/uploads/colleges/${college.thumbnail}` : "/placeholder.jpg"} className="w-full h-full object-cover opacity-60" />
+               <div className="absolute inset-0 flex items-center justify-center">
+                  <PlayCircle size={60} className="text-white opacity-90 group-hover:scale-110 transition-transform" />
+               </div>
+            </div>
+
+            {/* Gallery Section */}
+            <section className="border-t pt-10">
+                <h3 className="text-xl font-bold text-[#1a237e] mb-6">Gallery</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                   {gallery.map((img, i) => (
+                     <div key={i} className="h-44 rounded-lg overflow-hidden border bg-gray-50">
+                        <img src={`${baseUrl}/uploads/colleges/${img}`} className="w-full h-full object-cover" alt="college" />
+                     </div>
+                   ))}
+                </div>
+            </section>
           </div>
 
-          {/* Right Column: Sidebar */}
-          <div className="space-y-8">
-            {/* Sidebar Stats Card */}
-            <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-50 sticky top-10">
-              <h3 className="font-black text-[#1a237e] mb-6 border-b pb-4">Institutional Profile</h3>
-              <div className="space-y-6">
-                <SidebarInfo label="Sector" value={college.sector} icon={<Building2 size={16}/>} />
-                <SidebarInfo label="District/City" value={`${college.district}, ${college.city}`} icon={<MapPin size={16}/>} />
-                <SidebarInfo label="Gender" value={college.genderAcceptance} icon={<Users size={16}/>} />
-                <SidebarInfo label="State" value={college.state} icon={<Globe size={16}/>} />
-                <SidebarInfo label="Affiliation" value={college.affiliation} icon={<CheckCircle size={16}/>} />
+          {/* Sidebar (4 Cols) */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="p-3 border-b bg-gray-50 font-bold text-gray-700 text-sm">Location</div>
+              <div className="h-60 bg-gray-100">
+                <iframe 
+                  className="w-full h-full grayscale"
+                  src={`https://maps.google.com/maps?q=${college.name}+${college.city}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                />
               </div>
-
-              {/* Map Button */}
-              <a 
-                href={college.googleMapLink} 
-                target="_blank" 
-                className="mt-10 w-full flex items-center justify-center gap-2 bg-[#1a237e] text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-blue-900 transition-all"
-              >
-                <MapPin size={18}/> View on Map
-              </a>
+              <div className="p-6 space-y-5">
+                 <SidebarRow label="Sector" value={college.sector} icon={<Building2 size={16}/>} />
+                 <SidebarRow label="Location" value={`${college.city}, ${college.state}`} icon={<MapPin size={16}/>} />
+                 <SidebarRow label="Year Established" value={college.establishedYear} icon={<Calendar size={16}/>} />
+                 <SidebarRow label="Gender" value={college.genderAcceptance} icon={<UserCheck size={16}/>} />
+                 <SidebarRow label="Affiliation" value={college.affiliation} icon={<ShieldCheck size={16}/>} />
+                 
+                 <button className="w-full bg-[#4169E1] text-white py-3 rounded font-bold shadow-lg hover:bg-blue-700 transition-colors mt-4">
+                   Enquire Now
+                 </button>
+              </div>
             </div>
           </div>
 
@@ -134,21 +161,20 @@ const CollegeDetails = () => {
   );
 };
 
-// Sub-components for cleaner code
-const StatBox = ({ icon, label, value }) => (
-  <div className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-2xl border border-gray-100">
-    <div className="p-2 bg-white rounded-xl shadow-sm mb-2">{icon}</div>
-    <span className="text-xl font-black text-[#1a237e]">{value}</span>
-    <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">{label}</span>
+const CenterStat = ({ icon, value, label }) => (
+  <div className="flex flex-col items-center text-center">
+    <div className="mb-2">{icon}</div>
+    <div className="text-2xl font-black text-gray-800">{value}</div>
+    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</div>
   </div>
 );
 
-const SidebarInfo = ({ label, value, icon }) => (
-  <div className="flex gap-4 items-start">
-    <div className="mt-1 text-[#6739b7]">{icon}</div>
+const SidebarRow = ({ label, value, icon }) => (
+  <div className="flex gap-4 border-b border-gray-50 pb-3 last:border-0">
+    <div className="text-gray-400 mt-1">{icon}</div>
     <div>
-      <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">{label}</p>
-      <p className="text-sm font-bold text-[#1a237e] leading-tight mt-0.5">{value || 'N/A'}</p>
+      <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest leading-none mb-1">{label}</p>
+      <p className="text-sm font-bold text-gray-700">{value || "N/A"}</p>
     </div>
   </div>
 );

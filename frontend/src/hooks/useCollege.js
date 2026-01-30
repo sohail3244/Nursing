@@ -1,7 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios.config";
 
-// GET
+/* ===========================
+   GET ALL COLLEGES
+=========================== */
 export const useColleges = () => {
   return useQuery({
     queryKey: ["colleges"],
@@ -12,43 +14,63 @@ export const useColleges = () => {
   });
 };
 
-// CREATE
+/* ===========================
+   GET SINGLE COLLEGE BY ID
+=========================== */
+export const useCollegeById = (id) => {
+  return useQuery({
+    queryKey: ["college", id],
+    queryFn: async () => {
+      const res = await api.get(`/college/${id}`);
+      return res.data;
+    },
+    enabled: !!id, // 🔥 important
+  });
+};
+
+/* ===========================
+   ADD COLLEGE
+=========================== */
 export const useAddCollege = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (formData) => {
-      return api.post("/college", formData); // ✅ DIRECT
-    },
+    mutationFn: (formData) =>
+      api.post("/college", formData),
+
     onSuccess: () => {
       queryClient.invalidateQueries(["colleges"]);
     },
   });
 };
 
-// UPDATE
+/* ===========================
+   UPDATE COLLEGE
+=========================== */
 export const useUpdateCollege = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }) => {
-      return api.put(`/college/${id}`, data); // ✅ DIRECT
-    },
+    mutationFn: ({ id, data }) =>
+      api.put(`/college/${id}`, data),
+
     onSuccess: () => {
       queryClient.invalidateQueries(["colleges"]);
     },
   });
 };
 
-// DELETE
+/* ===========================
+   DELETE COLLEGE
+=========================== */
 export const useDeleteCollege = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id) => api.delete(`/college/${id}`),
+
     onSuccess: () => {
       queryClient.invalidateQueries(["colleges"]);
     },
   });
 };
-

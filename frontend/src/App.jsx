@@ -36,6 +36,7 @@ function App() {
         <Route path="popular-colleges" element={<PopularColleges />} />
         <Route path="popular-courses" element={<PopularCourses />} />
         <Route path="college-details" element={<CollegeDetails />} />
+        <Route path="/college/:id" element={<CollegeDetails />} />
       </Route>
 
       {/* 🔐 ADMIN ROUTES */}

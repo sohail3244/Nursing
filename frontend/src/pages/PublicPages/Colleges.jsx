@@ -2,9 +2,12 @@ import React from 'react';
 import FindCollegeSection from '../../components/common/FindCollegeSection';
 import { ChevronRight, MapPin, GraduationCap, Loader2, AlertCircle, Building2 } from 'lucide-react';
 import { useColleges } from '../../hooks/useCollege';
+import { useNavigate } from 'react-router-dom';
 
 const Colleges = () => {
   const brandColor = "#6739b7";
+  const navigate = useNavigate();
+
   
   // React Query Hook call
   const { data, isLoading, isError, error } = useColleges();
@@ -117,13 +120,15 @@ const Colleges = () => {
                      
                     </div>
 
-                    <button 
-                      style={{ backgroundColor: brandColor }}
-                      className="w-full mt-auto text-white py-4 rounded-2xl font-bold shadow-lg shadow-purple-100 hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-2"
-                    >
-                      View Details
-                      <ChevronRight size={18} />
-                    </button>
+                    <button
+  onClick={() => navigate(`/college/${college.id}`)}
+  style={{ backgroundColor: brandColor }}
+  className="w-full mt-auto text-white py-4 rounded-2xl font-bold shadow-lg shadow-purple-100 hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-2"
+>
+  View Details
+  <ChevronRight size={18} />
+</button>
+
                   </div>
                 </div>
               ))

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { X, Image as ImageIcon, Loader2, UploadCloud, MapPin, Info } from 'lucide-react';
+import { X, Image as ImageIcon, Loader2, UploadCloud, MapPin, Info, CheckSquare, Layers } from 'lucide-react';
 
 function CollegeModal({ isOpen, onClose, onSubmit, editingCollege, isMutating }) {
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
-  
+  const [selectedGallery, setSelectedGallery] = useState([]); // Multiple images ke liye
+
   const [formData, setFormData] = useState({
     name: '',
     code: '',
@@ -19,32 +20,24 @@ function CollegeModal({ isOpen, onClose, onSubmit, editingCollege, isMutating })
     affiliation: '',
     approvedBy: '',
     coursesCount: '',
-    experienceYears: ''
+    experienceYears: '',
+    facilities: '' // Isko comma-separated string ki tarah handle karenge
   });
 
   useEffect(() => {
     if (editingCollege) {
       setFormData({
-        name: editingCollege.name || '',
-        code: editingCollege.code || '',
-        description: editingCollege.description || '',
-        sector: editingCollege.sector || 'Private',
-        establishedYear: editingCollege.establishedYear || '',
-        genderAcceptance: editingCollege.genderAcceptance || 'Co-ed',
-        state: editingCollege.state || '',
-        district: editingCollege.district || '',
-        city: editingCollege.city || '',
-        address: editingCollege.address || '',
-        googleMapLink: editingCollege.googleMapLink || '',
-        affiliation: editingCollege.affiliation || '',
-        approvedBy: editingCollege.approvedBy || '',
-        coursesCount: editingCollege.coursesCount || '',
-        experienceYears: editingCollege.experienceYears || ''
+        ...editingCollege,
+        // Ensure values are strings to avoid controlled/uncontrolled input errors
+        coursesCount: editingCollege.coursesCount?.toString() || '',
+        experienceYears: editingCollege.experienceYears?.toString() || '',
+        establishedYear: editingCollege.establishedYear?.toString() || '',
       });
     } else {
       resetForm();
     }
     setSelectedThumbnail(null);
+    setSelectedGallery([]);
   }, [editingCollege, isOpen]);
 
   const resetForm = () => {
@@ -52,7 +45,8 @@ function CollegeModal({ isOpen, onClose, onSubmit, editingCollege, isMutating })
       name: '', code: '', description: '', sector: 'Private',
       establishedYear: '', genderAcceptance: 'Co-ed', state: '',
       district: '', city: '', address: '', googleMapLink: '',
-      affiliation: '', approvedBy: '', coursesCount: '', experienceYears: ''
+      affiliation: '', approvedBy: '', coursesCount: '', experienceYears: '',
+      facilities: ''
     });
   };
 
@@ -67,14 +61,21 @@ function CollegeModal({ isOpen, onClose, onSubmit, editingCollege, isMutating })
     e.preventDefault();
     const data = new FormData();
 
-    // Append all text/number fields based on schema
+    // Sare fields append karein
     Object.keys(formData).forEach(key => {
       data.append(key, formData[key]);
     });
 
-    // Thumbnail mapping (Schema: thumbnail)
+    // Thumbnail upload
     if (selectedThumbnail) {
       data.append("thumbnail", selectedThumbnail);
+    }
+
+    // Gallery upload (Multiple files)
+    if (selectedGallery.length > 0) {
+      Array.from(selectedGallery).forEach(file => {
+        data.append("gallery", file);
+      });
     }
 
     onSubmit(data);
@@ -82,16 +83,15 @@ function CollegeModal({ isOpen, onClose, onSubmit, editingCollege, isMutating })
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-[#1a237e]/40 backdrop-blur-md">
-      <div className="bg-white w-full max-w-4xl max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col">
+      <div className="bg-white w-full max-w-5xl max-h-[95vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="px-10 pt-8 pb-4 flex justify-between items-center bg-white border-b border-gray-50">
+        <div className="px-10 py-6 flex justify-between items-center bg-white border-b">
           <div>
             <h2 className="text-2xl font-black text-[#1a237e]">
               {editingCollege ? 'Update College Profile' : 'Register New College'}
             </h2>
-            <p className="text-gray-400 text-xs font-medium uppercase tracking-widest mt-1">Institutional Information System</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
             <X size={24} className="text-gray-400" />
           </button>
         </div>
@@ -99,105 +99,142 @@ function CollegeModal({ isOpen, onClose, onSubmit, editingCollege, isMutating })
         {/* Scrollable Form */}
         <form onSubmit={handleFormSubmit} className="p-10 overflow-y-auto space-y-8 custom-scrollbar">
           
-          {/* Section 1: Basic Info */}
-          <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-[#6739b7] font-bold text-sm uppercase tracking-wider">
-              <Info size={16} /> Basic Details
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">College Full Name</label>
-                <input required name="name" value={formData.name} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-[#6739b7] transition-all" />
-              </div>
-              <div>
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Unique Code</label>
-                <input required name="code" value={formData.code} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-[#6739b7] transition-all" />
-              </div>
-              <div className="md:col-span-3">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Description</label>
-                <textarea name="description" rows="3" value={formData.description} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-[#6739b7] transition-all" />
-              </div>
+          {/* Section 1: Basic & Academic */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-2">
+              <FieldLabel label="College Full Name" />
+              <input required name="name" value={formData.name} onChange={handleInputChange} className="input-style" />
+            </div>
+            <div>
+              <FieldLabel label="Unique Code" />
+              <input required name="code" value={formData.code} onChange={handleInputChange} className="input-style" />
+            </div>
+            <div className="md:col-span-3">
+              <FieldLabel label="Short Description" />
+              <textarea name="description" rows="2" value={formData.description} onChange={handleInputChange} className="input-style" />
             </div>
           </div>
 
-          {/* Section 2: Institutional Specifics */}
-          <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-[#6739b7] font-bold text-sm uppercase tracking-wider">
-              <UploadCloud size={16} /> Academic & Logistics
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div>
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Sector</label>
-                <select name="sector" value={formData.sector} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-[#6739b7]">
-                  <option value="Private">Private</option>
-                  <option value="Government">Government</option>
-                  <option value="Semi-Govt">Semi-Govt</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Est. Year</label>
-                <input type="number" name="establishedYear" value={formData.establishedYear} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-[#6739b7]" />
-              </div>
-              <div>
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Gender</label>
-                <select name="genderAcceptance" value={formData.genderAcceptance} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-[#6739b7]">
-                  <option value="Co-ed">Co-ed</option>
-                  <option value="Girls Only">Girls Only</option>
-                  <option value="Boys Only">Boys Only</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Course Count</label>
-                <input type="number" name="coursesCount" value={formData.coursesCount} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-[#6739b7]" />
-              </div>
+          {/* Section 2: Institutional Details */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-gray-50 p-6 rounded-3xl">
+            <div>
+              <FieldLabel label="Sector" />
+              <select name="sector" value={formData.sector} onChange={handleInputChange} className="input-style">
+                <option value="Private">Private</option>
+                <option value="Government">Government</option>
+                <option value="Semi-Govt">Semi-Govt</option>
+              </select>
+            </div>
+            <div>
+              <FieldLabel label="Est. Year" />
+              <input type="number" name="establishedYear" value={formData.establishedYear} onChange={handleInputChange} className="input-style" />
+            </div>
+            <div>
+              <FieldLabel label="Affiliation" />
+              <input name="affiliation" value={formData.affiliation} onChange={handleInputChange} placeholder="e.g. MG University" className="input-style" />
+            </div>
+            <div>
+              <FieldLabel label="Approved By" />
+              <input name="approvedBy" value={formData.approvedBy} onChange={handleInputChange} placeholder="e.g. AICTE, INC" className="input-style" />
             </div>
           </div>
 
-          {/* Section 3: Location */}
+          {/* Section 3: Location & Map */}
           <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-[#6739b7] font-bold text-sm uppercase tracking-wider">
-              <MapPin size={16} /> Location Details
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-              <input name="city" placeholder="City" value={formData.city} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl" />
-              <input name="district" placeholder="District" value={formData.district} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl" />
-              <input name="state" placeholder="State" value={formData.state} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl" />
-              <div className="md:col-span-3">
-                <input name="address" placeholder="Full Address" value={formData.address} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl" />
-              </div>
-            </div>
-          </div>
-
-          {/* Section 4: Media */}
-          <div className="space-y-4">
-            <h3 className="text-[#6739b7] font-bold text-sm uppercase tracking-wider">Branding</h3>
-            <div className="col-span-2">
-              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-100 border-dashed rounded-[2rem] cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all">
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <UploadCloud className="text-gray-300 mb-2" size={30} />
-                  <p className="text-xs text-gray-500 font-bold">{selectedThumbnail ? selectedThumbnail.name : "Upload Main Thumbnail"}</p>
+             <h3 className="text-[#6739b7] font-bold text-xs uppercase tracking-widest flex items-center gap-2"><MapPin size={14}/> Location & Connectivity</h3>
+             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <input name="city" placeholder="City" value={formData.city} onChange={handleInputChange} className="input-style" />
+                <input name="district" placeholder="District" value={formData.district} onChange={handleInputChange} className="input-style" />
+                <input name="state" placeholder="State" value={formData.state} onChange={handleInputChange} className="input-style" />
+                <div className="md:col-span-3">
+                   <input name="googleMapLink" placeholder="Google Map Embed URL / Link" value={formData.googleMapLink} onChange={handleInputChange} className="input-style" />
                 </div>
+             </div>
+          </div>
+
+          {/* Section 4: Facilities & Highlights */}
+          <div>
+            <FieldLabel label="Facilities (Separated by commas)" />
+            <div className="relative">
+              <CheckSquare className="absolute left-4 top-4 text-gray-300" size={18} />
+              <textarea 
+                name="facilities" 
+                placeholder="WiFi, Library, Hostel, Smart Classrooms..." 
+                value={formData.facilities} 
+                onChange={handleInputChange} 
+                className="input-style pl-12" 
+              />
+            </div>
+          </div>
+
+          {/* Section 5: Branding & Media */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-3">
+              <FieldLabel label="Main Thumbnail" />
+              <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-[2rem] cursor-pointer hover:bg-gray-50 transition-all border-[#6739b7]/20">
+                <UploadCloud className="text-[#6739b7] mb-2" size={24} />
+                <span className="text-[10px] font-bold text-gray-500">{selectedThumbnail ? selectedThumbnail.name : "Choose Cover Image"}</span>
                 <input type="file" className="hidden" accept="image/*" onChange={(e) => setSelectedThumbnail(e.target.files[0])} />
+              </label>
+            </div>
+            <div className="space-y-3">
+              <FieldLabel label="Campus Gallery (Multiple)" />
+              <label className="flex flex-col items-center justify-center h-32 border-2 border-dashed rounded-[2rem] cursor-pointer hover:bg-gray-50 transition-all border-blue-200">
+                <Layers className="text-blue-400 mb-2" size={24} />
+                <span className="text-[10px] font-bold text-gray-500">
+                  {selectedGallery.length > 0 ? `${selectedGallery.length} images selected` : "Upload Gallery Photos"}
+                </span>
+                <input type="file" multiple className="hidden" accept="image/*" onChange={(e) => setSelectedGallery(e.target.files)} />
               </label>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="flex gap-4 pt-6 sticky bottom-0 bg-white">
-            <button type="button" onClick={onClose} className="flex-1 px-8 py-4 border border-gray-100 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 transition-all">Cancel</button>
+            <button type="button" onClick={onClose} className="flex-1 px-8 py-4 border rounded-2xl font-bold text-gray-400 hover:bg-gray-50">Cancel</button>
             <button 
               type="submit" 
               disabled={isMutating}
-              className="flex-[2] px-8 py-4 bg-[#6739b7] text-white rounded-2xl font-bold hover:bg-[#5a32a3] transition-all shadow-xl shadow-purple-100 flex items-center justify-center gap-3"
+              className="flex-[2] px-8 py-4 bg-[#6739b7] text-white rounded-2xl font-bold hover:bg-[#5a32a3] shadow-xl flex items-center justify-center gap-3 disabled:opacity-70"
             >
-              {isMutating ? <Loader2 className="animate-spin" /> : (editingCollege ? 'Update College' : 'Confirm Registration')}
+              {isMutating ? <Loader2 className="animate-spin" /> : (editingCollege ? 'Update College Profile' : 'Confirm Registration')}
             </button>
           </div>
-
         </form>
       </div>
+
+      <style jsx>{`
+        .input-style {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          background-color: #f9fafb;
+          border: 1px solid #f3f4f6;
+          border-radius: 0.75rem;
+          outline: none;
+          font-size: 0.875rem;
+          transition: all 0.2s;
+        }
+        .input-style:focus {
+          border-color: #6739b7;
+          box-shadow: 0 0 0 2px rgba(103, 57, 183, 0.1);
+          background-color: #fff;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background-color: #e5e7eb;
+          border-radius: 10px;
+        }
+      `}</style>
     </div>
   );
 }
+
+const FieldLabel = ({ label }) => (
+  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-1 block">
+    {label}
+  </label>
+);
 
 export default CollegeModal;
