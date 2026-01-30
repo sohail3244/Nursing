@@ -85,7 +85,7 @@ const Colleges = () => {
                   {/* Banner Image (From Schema: image) */}
                   <div className="relative h-52 bg-gray-200 overflow-hidden">
                     <img
-     src={`${import.meta.env.VITE_API_BASE_URL}/uploads/colleges/${college.image}`}
+     src={`${import.meta.env.VITE_API_BASE_URL}/uploads/colleges/${college.thumbnail}`}
     alt={college.name}
     className="w-full h-full object-cover"
   />
@@ -105,7 +105,7 @@ const Colleges = () => {
                   {/* Content Container */}
                   <div className="p-7 pt-10 flex-grow flex flex-col">
                     <div className="mb-4">
-                      <span className="text-[10px] font-bold text-[#6739b7] uppercase tracking-widest">{college.code}</span>
+                      <span className="text-[10px] font-bold text-[#6739b7] uppercase tracking-widest">{college.sector}</span>
                       <h3 className="font-black text-[#1a237e] text-xl line-clamp-2 leading-tight mt-1 group-hover:text-[#6739b7] transition-colors">
                         {college.name}
                       </h3>

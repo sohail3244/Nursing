@@ -1,37 +1,69 @@
-import { mysqlTable, varchar, text, int, json, timestamp } from "drizzle-orm/mysql-core";
+import {
+  mysqlTable,
+  varchar,
+  text,
+  int,
+  json,
+  timestamp,
+  mysqlEnum,
+  index,
+} from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 
-export const collegesTable = mysqlTable("colleges", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .default(sql`(UUID())`),
+export const collegesTable = mysqlTable(
+  "colleges",
+  {
+    id: varchar("id", { length: 36 })
+      .primaryKey()
+      .default(sql`(UUID())`),
 
-  name: varchar("name", { length: 255 }).notNull(),
-  code: varchar("code", { length: 255 }).notNull().unique(),
+    name: varchar("name", { length: 255 }).notNull(),
+    code: varchar("code", { length: 100 }).notNull().unique(),
 
-  description: text("description"),
+    description: text("description"),
 
-  sector: varchar("sector", { length: 100 }),
-  establishedYear: int("established_year"),
-  genderAcceptance: varchar("gender_acceptance", { length: 50 }),
+    // ✅ ENUMS (IMPORTANT)
+    sector: mysqlEnum("sector", ["Private", "Government", "Semi-Govt"])
+      .default("Private"),
 
-  state: varchar("state", { length: 100 }),
-  district: varchar("district", { length: 100 }),
-  city: varchar("city", { length: 100 }),
-  address: text("address"),
+    genderAcceptance: mysqlEnum("gender_acceptance", [
+      "Co-ed",
+      "Boys",
+      "Girls",
+    ]).default("Co-ed"),
 
-  googleMapLink: text("google_map_link"),
+    establishedYear: int("established_year"),
 
-  affiliation: text("affiliation"),
-  approvedBy: text("approved_by"),
+    state: varchar("state", { length: 100 }),
+    district: varchar("district", { length: 100 }),
+    city: varchar("city", { length: 100 }),
+    address: text("address"),
 
-  coursesCount: int("courses_count"),
-  experienceYears: int("experience_years"),
+    googleMapLink: text("google_map_link"),
 
-  facilities: json("facilities"),  
+    affiliation: text("affiliation"),
+    approvedBy: text("approved_by"),
 
-  thumbnail: varchar("thumbnail", { length: 255 }),
-  gallery: json("gallery"),
+    coursesCount: int("courses_count"),
+    experienceYears: int("experience_years"),
+    studentsCount: int("students_count"),
 
-  createdAt: timestamp("created_at").defaultNow(),
-});
+    // ✅ JSON FIELDS
+    facilities: json("facilities").default([]),
+    gallery: json("gallery").default([]),
+
+    // ✅ MEDIA
+    thumbnail: varchar("thumbnail", { length: 255 }),
+    youtubeVideo: text("youtube_video"),
+
+    courseIds: json("course_ids").default(sql`(JSON_ARRAY())`),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+
+  // ✅ INDEXES (Very Important for performance)
+  (table) => ({
+    nameIndex: index("college_name_idx").on(table.name),
+    cityIndex: index("college_city_idx").on(table.city),
+    codeIndex: index("college_code_idx").on(table.code),
+  })
+);

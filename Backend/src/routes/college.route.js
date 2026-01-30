@@ -5,6 +5,7 @@ import {
   editCollege,
   deleteCollege,
   getCollegeById,
+  getCollegeCourses,
 } from "../controller/college.controller.js";
 
 import { verifyToken, isAdmin } from "../middlewares/auth.middleware.js";
@@ -41,6 +42,7 @@ router.put(
 
 router.get("/",  getColleges);
 router.get("/:id", getCollegeById);
+router.get("/:id/courses", getCollegeCourses);
 router.delete("/:id", verifyToken, isAdmin, checkCollegeExists, deleteCollege);
 
 export default router;

@@ -8,6 +8,27 @@
       "when": 1769685256761,
       "tag": "0000_complete_nehzno",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1769752159834,
+      "tag": "0001_dry_tinkerer",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769763532748,
+      "tag": "0002_sharp_korath",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1769765107170,
+      "tag": "0003_minor_morlocks",
+      "breakpoints": true
     }
   ]
 }

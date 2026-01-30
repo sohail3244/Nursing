@@ -2,7 +2,6 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// 🔹 Dynamic folder creator
 const createStorage = (folderName) => {
   const uploadPath = `uploads/${folderName}`;
 
@@ -15,22 +14,19 @@ const createStorage = (folderName) => {
       cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
-      const unique =
-        Date.now() + "-" + Math.round(Math.random() * 1e9);
+      const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
       cb(null, unique + path.extname(file.originalname));
     },
   });
 };
 
-// 🔹 Image filter
 const fileFilter = (req, file, cb) => {
   if (!file.mimetype.startsWith("image/")) {
-    cb(new Error("Only image files allowed"), false);
+    return cb(new Error("Only image files allowed"), false);
   }
   cb(null, true);
 };
 
-// 🔹 Reusable uploader
 export const upload = (folderName) =>
   multer({
     storage: createStorage(folderName),

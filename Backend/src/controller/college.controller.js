@@ -1,56 +1,87 @@
 import { db } from "../database/db.js";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { collegesTable } from "../models/college.schema.js";
+import { coursesTable } from "../models/course.schema.js";
+
 
 /* ================================
    ➕ ADD COLLEGE
 ================================ */
 export const addCollege = async (req, res) => {
   try {
+    const {
+      name,
+      code,
+      description,
+      sector,
+      genderAcceptance,
+      establishedYear,
+      state,
+      district,
+      city,
+      address,
+      googleMapLink,
+      affiliation,
+      approvedBy,
+      coursesCount,
+      experienceYears,
+      facilities,
+       courseIds,
+       studentsCount,
+  youtubeVideo,
+    } = req.body;
+
     const thumbnail = req.files?.thumbnail?.[0]?.filename || null;
     const gallery = req.files?.gallery?.map(f => f.filename) || [];
 
-   const data = {
-  name: req.body.name,
-  code: req.body.code,
-  description: req.body.description,
-  sector: req.body.sector,
-  establishedYear: Number(req.body.establishedYear),
-  genderAcceptance: req.body.genderAcceptance,
-  state: req.body.state,
-  district: req.body.district,
-  city: req.body.city,
-  address: req.body.address,
-  googleMapLink: req.body.googleMapLink,
-  affiliation: req.body.affiliation,
-  approvedBy: req.body.approvedBy,
-  coursesCount: Number(req.body.coursesCount),
-  experienceYears: Number(req.body.experienceYears),
+    const facilitiesArray = facilities
+      ? facilities.split(",").map(f => f.trim())
+      : [];
 
-  facilities: JSON.stringify(
-    JSON.parse(req.body.facilities || "[]")
-  ),
+       const parsedCourseIds = courseIds
+      ? Array.isArray(courseIds)
+        ? courseIds
+        : JSON.parse(courseIds)
+      : [];
 
-  thumbnail,
-  gallery: JSON.stringify(gallery),
-};
+    await db.insert(collegesTable).values({
+      name,
+      code,
+      description,
+      sector,
+      genderAcceptance,
+      establishedYear,
+      state,
+      district,
+      city,
+      address,
+      googleMapLink,
+      affiliation,
+      approvedBy,
+      coursesCount,
+      experienceYears,
+      facilities: facilitiesArray,
+      courseIds: parsedCourseIds, 
+      thumbnail,
+      gallery,
+      studentsCount,
+      youtubeVideo,
+    });
 
-
-    await db.insert(collegesTable).values(data);
-
-    res.json({
+    res.status(201).json({
       success: true,
-      message: "College added successfully",
+      message: "College created successfully",
     });
 
   } catch (error) {
-    console.error("COLLEGE ERROR:", error);
+    console.error("CREATE COLLEGE ERROR:", error);
     res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
+
 
 
 
@@ -108,21 +139,23 @@ export const getCollegeById = async (req, res) => {
 export const editCollege = async (req, res) => {
   try {
     const thumbnail = req.files?.thumbnail?.[0]?.filename || null;
-    const gallery =
-      req.files?.gallery?.map((img) => img.filename) || [];
+    const gallery = req.files?.gallery?.map(f => f.filename) || [];
 
     const updatedData = {
       ...req.body,
       ...(thumbnail && { thumbnail }),
       ...(gallery.length && { gallery }),
-      ...(req.body.facilities && {
-        facilities: req.body.facilities
-  ? JSON.parse(req.body.facilities)
-  : [],
-
-gallery: req.files?.gallery?.map(f => f.filename) || [],
-      }),
     };
+
+    // ✅ handle facilities
+    if (req.body.facilities) {
+      updatedData.facilities = JSON.parse(req.body.facilities);
+    }
+
+    // ✅ handle courseIds
+    if (req.body.courseIds) {
+      updatedData.courseIds = JSON.parse(req.body.courseIds);
+    }
 
     await db
       .update(collegesTable)
@@ -142,6 +175,7 @@ gallery: req.files?.gallery?.map(f => f.filename) || [],
   }
 };
 
+
 /* ================================
    ❌ DELETE COLLEGE
 ================================ */
@@ -156,6 +190,52 @@ export const deleteCollege = async (req, res) => {
       message: "College deleted successfully",
     });
   } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getCollegeCourses = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [college] = await db
+      .select()
+      .from(collegesTable)
+      .where(eq(collegesTable.id, id));
+
+    if (!college) {
+      return res.status(404).json({
+        success: false,
+        message: "College not found",
+      });
+    }
+
+    const courseIds =
+  typeof college.courseIds === "string"
+    ? JSON.parse(college.courseIds)
+    : college.courseIds || [];
+
+    if (!courseIds.length) {
+      return res.json({
+        success: true,
+        data: [],
+      });
+    }
+
+    const courses = await db
+      .select()
+      .from(coursesTable)
+      .where(inArray(coursesTable.id, courseIds)); // ✅ NOW WORKS
+
+    res.json({
+      success: true,
+      data: courses,
+    });
+  } catch (error) {
+    console.error("GET COLLEGE COURSES ERROR:", error);
     res.status(500).json({
       success: false,
       message: error.message,

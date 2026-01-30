@@ -74,3 +74,15 @@ export const useDeleteCollege = () => {
     },
   });
 };
+
+
+export const useCollegeCourses = (collegeId) => {
+  return useQuery({
+    queryKey: ["college-courses", collegeId],
+    queryFn: async () => {
+      const res = await api.get(`/college/${collegeId}/courses`);
+      return res.data; // 👈 IMPORTANT
+    },
+    enabled: !!collegeId,
+  });
+};
