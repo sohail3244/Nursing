@@ -2,7 +2,6 @@ import { Router } from "express";
 import {
   addCourse,
   getAllCourses,
-  getCoursesOfCollege,
   editCourse,
   removeCourse,
 } from "../controller/course.controller.js";
@@ -14,6 +13,7 @@ import { checkCourseExists } from "../middlewares/course.middleware.js";
 
 const router = Router();
 
+// ✅ CREATE COURSE
 router.post(
   "/",
   verifyToken,
@@ -22,14 +22,10 @@ router.post(
   addCourse
 );
 
-router.get("/",  getAllCourses);
+// ✅ GET ALL COURSES
+router.get("/", getAllCourses);
 
-router.get(
-  "/college/:collegeId",
-  verifyToken,
-  getCoursesOfCollege
-);
-
+// ✅ UPDATE COURSE
 router.put(
   "/:id",
   verifyToken,
@@ -38,6 +34,7 @@ router.put(
   editCourse
 );
 
+// ✅ DELETE COURSE
 router.delete(
   "/:id",
   verifyToken,

@@ -1,6 +1,5 @@
 import {
   getCourses,
-  getCoursesByCollege,
   updateCourse,
   deleteCourse,
   createCourse,
@@ -13,11 +12,6 @@ export async function addCourse(req, res) {
 
 export async function getAllCourses(req, res) {
   const data = await getCourses();
-  res.json({ success: true, data });
-}
-
-export async function getCoursesOfCollege(req, res) {
-  const data = await getCoursesByCollege(req.params.collegeId);
   res.json({ success: true, data });
 }
 

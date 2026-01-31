@@ -2,9 +2,8 @@ import { eq } from "drizzle-orm";
 import { coursesTable } from "../models/course.schema.js";
 import { db } from "../database/db.js";
 
-// ✅ CREATE COURSE
+// CREATE
 export async function createCourse(data) {
-  // 🔍 Check duplicate course code
   const existing = await db
     .select()
     .from(coursesTable)
@@ -17,20 +16,12 @@ export async function createCourse(data) {
   return await db.insert(coursesTable).values(data);
 }
 
-// ✅ GET ALL COURSES
+// GET ALL
 export async function getCourses() {
   return await db.select().from(coursesTable);
 }
 
-// ✅ GET COURSES BY COLLEGE
-export async function getCoursesByCollege(collegeId) {
-  return await db
-    .select()
-    .from(coursesTable)
-    .where(eq(coursesTable.collegeId, collegeId));
-}
-
-// ✅ UPDATE COURSE
+// UPDATE
 export async function updateCourse(id, data) {
   return await db
     .update(coursesTable)
@@ -38,7 +29,7 @@ export async function updateCourse(id, data) {
     .where(eq(coursesTable.id, id));
 }
 
-// ✅ DELETE COURSE
+// DELETE
 export async function deleteCourse(id) {
   return await db
     .delete(coursesTable)

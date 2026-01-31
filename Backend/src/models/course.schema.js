@@ -1,7 +1,6 @@
 import {
   mysqlTable,
   varchar,
-  int,
   timestamp,
   boolean,
   uniqueIndex,
@@ -15,11 +14,9 @@ export const coursesTable = mysqlTable(
       .primaryKey()
       .default(sql`(UUID())`),
 
-    collegeId: varchar("college_id", { length: 36 }).notNull(),
-
     name: varchar("name", { length: 255 }).notNull(),
 
-    code: varchar("code", { length: 100 }).notNull(), // ✅ UNIQUE CODE
+    code: varchar("code", { length: 100 }).notNull(),
 
     duration: varchar("duration", { length: 50 }).notNull(),
     eligibility: varchar("eligibility", { length: 255 }),

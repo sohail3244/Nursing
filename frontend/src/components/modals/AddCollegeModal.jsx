@@ -1,245 +1,543 @@
-import React, { useEffect, useState } from 'react';
-import { X, Loader2, UploadCloud, MapPin, CheckSquare, Layers, Youtube, Users, GraduationCap } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import {
+  X,
+  Loader2,
+  UploadCloud,
+  MapPin,
+  CheckSquare,
+  Layers,
+  Youtube,
+  Users,
+  BookOpen,
+  Building2,
+  Calendar,
+  ShieldCheck,
+  Info,
+} from "lucide-react";
+import { useCourses } from "../../hooks/useCourse";
+import Button from "../common/Button";
 
-function CollegeModal({ isOpen, onClose, onSubmit, editingCollege, isMutating }) {
+function CollegeModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  editingCollege,
+  isMutating = false,
+}) {
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const [selectedGallery, setSelectedGallery] = useState([]);
+  const [galleryPreviews, setGalleryPreviews] = useState([]);
+  const [selectedCourses, setSelectedCourses] = useState([]);
+  const { data: availableCourses = [], isLoading } = useCourses();
+  
 
   const [formData, setFormData] = useState({
-    name: '',
-    code: '',
-    description: '',
-    sector: 'Private',
-    genderAcceptance: 'Co-ed', // Schema Enum
-    establishedYear: '',
-    state: '',
-    district: '',
-    city: '',
-    address: '',
-    googleMapLink: '',
-    affiliation: '',
-    approvedBy: '',
-    coursesCount: '',
-    experienceYears: '',
-    studentsCount: '', // Schema field added
-    youtubeVideo: '', // Schema field added
-    facilities: '' // Input as string, conversion handled in submit
+    name: "",
+    code: "",
+    description: "",
+    sector: "Private",
+    genderAcceptance: "Co-ed",
+    establishedYear: "",
+    state: "",
+    district: "",
+    city: "",
+    address: "",
+    googleMapLink: "",
+    affiliation: "",
+    approvedBy: "",
+    coursesCount: "",
+    experienceYears: "",
+    studentsCount: "",
+    youtubeVideo: "",
+    facilities: "",
   });
 
   useEffect(() => {
+  return () => {
+    galleryPreviews.forEach(url => URL.revokeObjectURL(url));
+  };
+}, [galleryPreviews]);
+
+  useEffect(() => {
     if (editingCollege) {
-      // Facilities array ko wapas string banane ke liye check
-      const facilitiesStr = Array.isArray(editingCollege.facilities) 
-        ? editingCollege.facilities.join(', ') 
-        : editingCollege.facilities || '';
+      const facilitiesStr = Array.isArray(editingCollege.facilities)
+        ? editingCollege.facilities.join(", ")
+        : editingCollege.facilities || "";
 
       setFormData({
         ...editingCollege,
         facilities: facilitiesStr,
-        coursesCount: editingCollege.coursesCount?.toString() || '',
-        experienceYears: editingCollege.experienceYears?.toString() || '',
-        establishedYear: editingCollege.establishedYear?.toString() || '',
-        studentsCount: editingCollege.studentsCount?.toString() || '',
+        coursesCount: editingCollege.coursesCount?.toString() || "",
+        experienceYears: editingCollege.experienceYears?.toString() || "",
+        establishedYear: editingCollege.establishedYear?.toString() || "",
+        studentsCount: editingCollege.studentsCount?.toString() || "",
       });
+
+      // Setting existing course IDs
+      setSelectedCourses(editingCollege.courseIds || []);
     } else {
       resetForm();
     }
+    // Clean up previews on open/close
     setSelectedThumbnail(null);
-    setSelectedGallery([]);
+    setGalleryPreviews([]);
   }, [editingCollege, isOpen]);
 
   const resetForm = () => {
     setFormData({
-      name: '', code: '', description: '', sector: 'Private',
-      genderAcceptance: 'Co-ed', establishedYear: '', state: '',
-      district: '', city: '', address: '', googleMapLink: '',
-      affiliation: '', approvedBy: '', coursesCount: '', 
-      experienceYears: '', studentsCount: '', youtubeVideo: '',
-      facilities: ''
+      name: "",
+      code: "",
+      description: "",
+      sector: "Private",
+      genderAcceptance: "Co-ed",
+      establishedYear: "",
+      state: "",
+      district: "",
+      city: "",
+      address: "",
+      googleMapLink: "",
+      affiliation: "",
+      approvedBy: "",
+      coursesCount: "",
+      experienceYears: "",
+      studentsCount: "",
+      youtubeVideo: "",
+      facilities: "",
     });
+    setSelectedCourses([]);
   };
-
-  if (!isOpen) return null;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    const data = new FormData();
+ const handleGalleryChange = (e) => {
+  const files = Array.from(e.target.files);
 
-    // 1. Data Processing for Schema
-    const processedData = {
-      ...formData,
-      // String to Number conversion
-      establishedYear: parseInt(formData.establishedYear) || null,
-      coursesCount: parseInt(formData.coursesCount) || 0,
-      experienceYears: parseInt(formData.experienceYears) || 0,
-      studentsCount: parseInt(formData.studentsCount) || 0,
-      // String to JSON (Array) for Schema
-      facilities: JSON.stringify(formData.facilities.split(',').map(f => f.trim()).filter(f => f !== ""))
-    };
+  setSelectedGallery((prev) => [...prev, ...files]);
 
-    // 2. Append to FormData
-    Object.keys(processedData).forEach(key => {
-      data.append(key, processedData[key]);
-    });
+  const previews = files.map((file) => URL.createObjectURL(file));
+  setGalleryPreviews((prev) => [...prev, ...previews]);
+};
 
-    if (selectedThumbnail) data.append("thumbnail", selectedThumbnail);
-    if (selectedGallery.length > 0) {
-      Array.from(selectedGallery).forEach(file => data.append("gallery", file));
-    }
 
-    onSubmit(data);
+  const handleCourseToggle = (courseId) => {
+    setSelectedCourses((prev) =>
+      prev.includes(courseId)
+        ? prev.filter((id) => id !== courseId)
+        : [...prev, courseId],
+    );
   };
+
+ const handleFormSubmit = (e) => {
+  e.preventDefault();
+
+  const data = new FormData();
+
+  const processedData = {
+    ...formData,
+    establishedYear: parseInt(formData.establishedYear) || null,
+    coursesCount: parseInt(formData.coursesCount) || 0,
+    experienceYears: parseInt(formData.experienceYears) || 0,
+    studentsCount: parseInt(formData.studentsCount) || 0,
+    facilities: formData.facilities
+      .split(",")
+      .map(f => f.trim())
+      .filter(Boolean),
+    courseIds: selectedCourses,
+  };
+
+  Object.entries(processedData).forEach(([key, value]) => {
+    data.append(key, value);
+  });
+
+  if (selectedThumbnail) {
+    data.append("thumbnail", selectedThumbnail);
+  }
+
+  selectedGallery.forEach((file) => {
+  data.append("gallery", file);
+});
+
+
+  onSubmit(data);
+};
+
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-[#1a237e]/40 backdrop-blur-md">
-      <div className="bg-white w-full max-w-5xl max-h-[95vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col">
+      <div className="bg-white w-full max-w-5xl max-h-[95vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col scale-in-animation">
         {/* Header */}
-        <div className="px-10 py-6 flex justify-between items-center bg-white border-b">
-          <h2 className="text-2xl font-black text-[#1a237e]">
-            {editingCollege ? 'Update College Profile' : 'Register New College'}
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <X size={24} className="text-gray-400" />
+        <div className="px-10 py-6 flex justify-between items-center bg-white border-b sticky top-0 z-10">
+          <div>
+            <h2 className="text-2xl font-black text-[#1a237e]">
+              {editingCollege
+                ? "Update College Profile"
+                : "Register New College"}
+            </h2>
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">
+              Institution Management System
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-red-50 hover:text-red-500 rounded-full transition-all"
+          >
+            <X size={28} />
           </button>
         </div>
 
         {/* Scrollable Form */}
-        <form onSubmit={handleFormSubmit} className="p-10 overflow-y-auto space-y-8 custom-scrollbar">
-          
+        <form
+          onSubmit={handleFormSubmit}
+          className="p-10 overflow-y-auto space-y-10 custom-scrollbar"
+        >
           {/* Section 1: Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2">
-              <FieldLabel label="College Full Name" />
-              <input required name="name" value={formData.name} onChange={handleInputChange} className="input-style" />
-            </div>
-            <div>
-              <FieldLabel label="Unique Code (Slug)" />
-              <input required name="code" value={formData.code} onChange={handleInputChange} className="input-style" placeholder="e.g. kims-nursing" />
-            </div>
-            <div className="md:col-span-3">
-              <FieldLabel label="Short Description" />
-              <textarea name="description" rows="3" value={formData.description} onChange={handleInputChange} className="input-style" />
+          <div className="space-y-6">
+            <h3 className="text-[#6739b7] font-bold text-xs uppercase tracking-widest flex items-center gap-2 border-b pb-2">
+              <Info size={14} /> General Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="md:col-span-2">
+                <FieldLabel label="College Full Name" />
+                <input
+                  required
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="input-style"
+                  placeholder="e.g. Harvard Medical College"
+                />
+              </div>
+              <div>
+                <FieldLabel label="Unique Code (Slug)" />
+                <input
+                  required
+                  name="code"
+                  value={formData.code}
+                  onChange={handleInputChange}
+                  className="input-style"
+                  placeholder="e.g. hmc-2024"
+                />
+              </div>
+              <div className="md:col-span-3">
+                <FieldLabel label="Detailed Description" />
+                <textarea
+                  name="description"
+                  rows="4"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  className="input-style"
+                  placeholder="Describe the institution's history and vision..."
+                />
+              </div>
             </div>
           </div>
 
-          {/* Section 2: Stats & Enums (Enum Support) */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-gray-50 p-6 rounded-3xl">
-            <div>
+          {/* Section 2: Course Selection Dropdown (Multi-select) */}
+          {isLoading ? (
+            <p className="text-gray-400 text-sm">Loading courses...</p>
+          ) : availableCourses?.data?.length > 0 ? (
+            availableCourses.data.map((course) => (
+              <button
+                key={course.id}
+                type="button"
+                onClick={() => handleCourseToggle(course.id)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                  selectedCourses.includes(course.id)
+                    ? "bg-[#6739b7] text-white border-[#6739b7] shadow-lg shadow-purple-200"
+                    : "bg-white text-gray-500 border-gray-200 hover:border-purple-300 hover:text-purple-600"
+                }`}
+              >
+                {course.name}
+              </button>
+            ))
+          ) : (
+            <p className="text-gray-400 text-sm">
+              No courses found in database.
+            </p>
+          )}
+
+          {/* Section 3: Detailed Stats & Enums */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-gray-50 p-8 rounded-[2rem]">
+            <div className="space-y-1">
               <FieldLabel label="Sector" />
-              <select name="sector" value={formData.sector} onChange={handleInputChange} className="input-style">
-                <option value="Private">Private</option>
-                <option value="Government">Government</option>
-                <option value="Semi-Govt">Semi-Govt</option>
-              </select>
+              <div className="relative">
+                <Building2
+                  className="absolute left-3 top-3.5 text-gray-400"
+                  size={16}
+                />
+                <select
+                  name="sector"
+                  value={formData.sector}
+                  onChange={handleInputChange}
+                  className="input-style pl-10"
+                >
+                  <option value="Private">Private</option>
+                  <option value="Government">Government</option>
+                  <option value="Semi-Govt">Semi-Govt</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <FieldLabel label="Gender Acceptance" />
-              <select name="genderAcceptance" value={formData.genderAcceptance} onChange={handleInputChange} className="input-style">
+            <div className="space-y-1">
+              <FieldLabel label="Acceptance" />
+              <select
+                name="genderAcceptance"
+                value={formData.genderAcceptance}
+                onChange={handleInputChange}
+                className="input-style"
+              >
                 <option value="Co-ed">Co-ed</option>
                 <option value="Boys">Boys</option>
                 <option value="Girls">Girls</option>
               </select>
             </div>
-            <div>
+            <div className="space-y-1">
               <FieldLabel label="Est. Year" />
-              <input type="number" name="establishedYear" value={formData.establishedYear} onChange={handleInputChange} className="input-style" />
-            </div>
-            <div>
-              <FieldLabel label="Students Count" />
               <div className="relative">
-                 <Users className="absolute left-3 top-3 text-gray-400" size={16}/>
-                 <input type="number" name="studentsCount" value={formData.studentsCount} onChange={handleInputChange} className="input-style pl-10" />
+                <Calendar
+                  className="absolute left-3 top-3.5 text-gray-400"
+                  size={16}
+                />
+                <input
+                  type="number"
+                  name="establishedYear"
+                  value={formData.establishedYear}
+                  onChange={handleInputChange}
+                  className="input-style pl-10"
+                />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <FieldLabel label="Students" />
+              <div className="relative">
+                <Users
+                  className="absolute left-3 top-3.5 text-gray-400"
+                  size={16}
+                />
+                <input
+                  type="number"
+                  name="studentsCount"
+                  value={formData.studentsCount}
+                  onChange={handleInputChange}
+                  className="input-style pl-10"
+                />
               </div>
             </div>
           </div>
 
-          {/* Section 3: Academic Details */}
+          {/* Section 4: Academic Details */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <FieldLabel label="Total Courses" />
-              <input type="number" name="coursesCount" value={formData.coursesCount} onChange={handleInputChange} className="input-style" />
-            </div>
-            <div>
-              <FieldLabel label="Years of Experience" />
-              <input type="number" name="experienceYears" value={formData.experienceYears} onChange={handleInputChange} className="input-style" />
-            </div>
-            <div>
-              <FieldLabel label="Youtube Video Link" />
+              <FieldLabel label="Affiliation" />
               <div className="relative">
-                 <Youtube className="absolute left-3 top-3 text-red-500" size={16}/>
-                 <input name="youtubeVideo" value={formData.youtubeVideo} onChange={handleInputChange} placeholder="https://youtube.com/..." className="input-style pl-10" />
+                <ShieldCheck
+                  className="absolute left-3 top-3.5 text-emerald-500"
+                  size={16}
+                />
+                <input
+                  name="affiliation"
+                  value={formData.affiliation}
+                  onChange={handleInputChange}
+                  className="input-style pl-10"
+                  placeholder="e.g. University Name"
+                />
+              </div>
+            </div>
+            <div>
+              <FieldLabel label="Approved By" />
+              <input
+                name="approvedBy"
+                value={formData.approvedBy}
+                onChange={handleInputChange}
+                className="input-style"
+                placeholder="e.g. AICTE, UGC"
+              />
+            </div>
+            <div>
+              <FieldLabel label="Youtube Link" />
+              <div className="relative">
+                <Youtube
+                  className="absolute left-3 top-3.5 text-red-500"
+                  size={16}
+                />
+                <input
+                  name="youtubeVideo"
+                  value={formData.youtubeVideo}
+                  onChange={handleInputChange}
+                  className="input-style pl-10"
+                  placeholder="Youtube URL"
+                />
               </div>
             </div>
           </div>
 
-          {/* Section 4: Location */}
-          <div className="space-y-4">
-            <h3 className="text-[#6739b7] font-bold text-xs uppercase tracking-widest flex items-center gap-2"><MapPin size={14}/> Address & Location</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-              <input name="city" placeholder="City" value={formData.city} onChange={handleInputChange} className="input-style" />
-              <input name="district" placeholder="District" value={formData.district} onChange={handleInputChange} className="input-style" />
-              <input name="state" placeholder="State" value={formData.state} onChange={handleInputChange} className="input-style" />
+          {/* Section 5: Location */}
+          <div className="space-y-6">
+            <h3 className="text-[#6739b7] font-bold text-xs uppercase tracking-widest flex items-center gap-2 border-b pb-2">
+              <MapPin size={14} /> Location & Address
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <input
+                name="city"
+                placeholder="City"
+                value={formData.city}
+                onChange={handleInputChange}
+                className="input-style"
+              />
+              <input
+                name="district"
+                placeholder="District"
+                value={formData.district}
+                onChange={handleInputChange}
+                className="input-style"
+              />
+              <input
+                name="state"
+                placeholder="State"
+                value={formData.state}
+                onChange={handleInputChange}
+                className="input-style"
+              />
               <div className="md:col-span-3">
-                <textarea name="address" placeholder="Full Postal Address" rows="2" value={formData.address} onChange={handleInputChange} className="input-style" />
+                <textarea
+                  name="address"
+                  placeholder="Full Detailed Address..."
+                  rows="2"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  className="input-style"
+                />
               </div>
               <div className="md:col-span-3">
-                <input name="googleMapLink" placeholder="Google Maps Embed Link" value={formData.googleMapLink} onChange={handleInputChange} className="input-style" />
+                <input
+                  name="googleMapLink"
+                  placeholder="Google Maps Embed URL"
+                  value={formData.googleMapLink}
+                  onChange={handleInputChange}
+                  className="input-style"
+                />
               </div>
             </div>
           </div>
 
-          {/* Section 5: Facilities (JSON handled as string) */}
+          {/* Section 6: Facilities */}
           <div>
-            <FieldLabel label="Facilities (Separated by commas)" />
+            <FieldLabel label="Facilities (Comma Separated)" />
             <div className="relative">
-              <CheckSquare className="absolute left-4 top-4 text-[#6739b7]" size={18} />
-              <textarea 
-                name="facilities" 
-                placeholder="WiFi, Library, Hostel, Transport, Smart Classrooms..." 
-                value={formData.facilities} 
-                onChange={handleInputChange} 
-                className="input-style pl-12 h-24" 
+              <CheckSquare
+                className="absolute left-4 top-4 text-[#6739b7]"
+                size={18}
+              />
+              <textarea
+                name="facilities"
+                placeholder="WiFi, Laboratory, Hostel, Canteen..."
+                value={formData.facilities}
+                onChange={handleInputChange}
+                className="input-style pl-12 min-h-[100px]"
               />
             </div>
           </div>
 
-          {/* Section 6: Media Uploads */}
+          {/* Section 7: Media with Previews */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-3">
               <FieldLabel label="Main Thumbnail" />
-              <label className="flex flex-col items-center justify-center h-40 border-2 border-dashed rounded-[2rem] cursor-pointer hover:bg-gray-50 transition-all border-[#6739b7]/20 group">
-                <UploadCloud className="text-[#6739b7] mb-2 group-hover:scale-110 transition-transform" size={32} />
-                <span className="text-xs font-bold text-gray-500">{selectedThumbnail ? selectedThumbnail.name : "Upload Cover Image"}</span>
-                <input type="file" className="hidden" accept="image/*" onChange={(e) => setSelectedThumbnail(e.target.files[0])} />
+              <label className="flex flex-col items-center justify-center h-48 border-2 border-dashed rounded-[2rem] cursor-pointer hover:bg-gray-50 transition-all border-[#6739b7]/20 relative overflow-hidden group">
+                {selectedThumbnail ? (
+                  <div className="absolute inset-0 w-full h-full">
+                    <img
+                      src={URL.createObjectURL(selectedThumbnail)}
+                      className="w-full h-full object-cover"
+                      alt="preview"
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <UploadCloud className="text-white" />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <UploadCloud className="text-[#6739b7] mb-2" size={32} />
+                    <span className="text-xs font-bold text-gray-400">
+                      Upload Cover Image
+                    </span>
+                  </>
+                )}
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={(e) => setSelectedThumbnail(e.target.files[0])}
+                />
               </label>
             </div>
+
             <div className="space-y-3">
-              <FieldLabel label="Campus Gallery" />
-              <label className="flex flex-col items-center justify-center h-40 border-2 border-dashed rounded-[2rem] cursor-pointer hover:bg-gray-50 transition-all border-blue-200 group">
-                <Layers className="text-blue-400 mb-2 group-hover:scale-110 transition-transform" size={32} />
-                <span className="text-xs font-bold text-gray-500">
-                  {selectedGallery.length > 0 ? `${selectedGallery.length} images selected` : "Upload Multiple Photos"}
+              <FieldLabel
+                label={`Campus Gallery (${selectedGallery.length})`}
+              />
+              <label className="flex flex-col items-center justify-center h-48 border-2 border-dashed rounded-[2rem] cursor-pointer hover:bg-gray-50 transition-all border-blue-200 group">
+                <Layers
+                  className="text-blue-400 mb-2 group-hover:scale-110 transition-transform"
+                  size={32}
+                />
+                <span className="text-xs font-bold text-gray-400">
+                  Select Multiple Photos
                 </span>
-                <input type="file" multiple className="hidden" accept="image/*" onChange={(e) => setSelectedGallery(e.target.files)} />
+                <input
+                  type="file"
+                  multiple
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleGalleryChange}
+                />
               </label>
+
+              {/* Gallery Previews */}
+              {galleryPreviews.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {galleryPreviews.map((src, i) => (
+                    <div
+                      key={i}
+                      className="w-16 h-16 rounded-xl overflow-hidden shadow-sm border border-gray-100"
+                    >
+                      <img
+                        src={src}
+                        className="w-full h-full object-cover"
+                        alt="preview"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Footer Action Buttons */}
-          <div className="flex gap-4 pt-6 sticky bottom-0 bg-white border-t mt-4">
-            <button type="button" onClick={onClose} className="flex-1 px-8 py-4 border-2 border-gray-100 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 transition-colors">Cancel</button>
-            <button 
-              type="submit" 
-              disabled={isMutating}
-              className="flex-[2] px-8 py-4 bg-[#6739b7] text-white rounded-2xl font-bold hover:bg-[#5a32a3] shadow-xl shadow-purple-200 flex items-center justify-center gap-3 disabled:opacity-70 transition-all active:scale-[0.98]"
+          {/* Footer Actions */}
+          <div className="flex gap-4 pt-6 sticky bottom-0 bg-white border-t mt-10">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-8 py-4 border-2 border-gray-100 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 transition-all"
             >
-              {isMutating ? <Loader2 className="animate-spin" /> : (editingCollege ? 'Update College Details' : 'Finalize Registration')}
+              Cancel
             </button>
+            <Button
+              type="submit"
+  disabled={isMutating}
+  className="flex-[2] px-8 py-4 bg-[#6739b7] text-white rounded-2xl font-bold hover:bg-[#5a32a3] shadow-xl shadow-purple-200 flex items-center justify-center gap-3 disabled:opacity-70 active:scale-95 transition-all"
+>
+  {isMutating ? (
+    <Loader2 className="animate-spin" />
+  ) : editingCollege ? (
+    "Update Profile"
+  ) : (
+    "Confirm Registration"
+  )}
+            </Button>
           </div>
         </form>
       </div>
@@ -247,24 +545,39 @@ function CollegeModal({ isOpen, onClose, onSubmit, editingCollege, isMutating })
       <style jsx>{`
         .input-style {
           width: 100%;
-          padding: 0.85rem 1.25rem;
+          padding: 0.9rem 1.25rem;
           background-color: #f8fafc;
           border: 1.5px solid #f1f5f9;
-          border-radius: 1rem;
+          border-radius: 1.2rem;
           outline: none;
           font-size: 0.9rem;
           font-weight: 500;
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.2s ease;
         }
         .input-style:focus {
           border-color: #6739b7;
-          box-shadow: 0 4px 12px rgba(103, 57, 183, 0.08);
           background-color: #fff;
+          box-shadow: 0 4px 20px rgba(103, 57, 183, 0.08);
         }
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background-color: #e2e8f0;
-          border-radius: 20px;
+          border-radius: 10px;
+        }
+        .scale-in-animation {
+          animation: scaleIn 0.3s ease-out;
+        }
+        @keyframes scaleIn {
+          from {
+            transform: scale(0.95);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
         }
       `}</style>
     </div>

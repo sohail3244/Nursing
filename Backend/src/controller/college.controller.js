@@ -34,9 +34,13 @@ export const addCollege = async (req, res) => {
     const thumbnail = req.files?.thumbnail?.[0]?.filename || null;
     const gallery = req.files?.gallery?.map(f => f.filename) || [];
 
-    const facilitiesArray = facilities
-      ? facilities.split(",").map(f => f.trim())
-      : [];
+    const facilitiesArray = Array.isArray(facilities)
+  ? facilities
+  : facilities
+      ?.split(",")
+      .map(f => f.trim())
+      .filter(Boolean);
+
 
        const parsedCourseIds = courseIds
       ? Array.isArray(courseIds)
@@ -149,8 +153,14 @@ export const editCollege = async (req, res) => {
 
     // ✅ handle facilities
     if (req.body.facilities) {
-      updatedData.facilities = JSON.parse(req.body.facilities);
-    }
+  updatedData.facilities = Array.isArray(req.body.facilities)
+    ? req.body.facilities
+    : req.body.facilities
+        .split(",")
+        .map(f => f.trim())
+        .filter(Boolean);
+}
+
 
     // ✅ handle courseIds
     if (req.body.courseIds) {

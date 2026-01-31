@@ -29,6 +29,27 @@
       "when": 1769765107170,
       "tag": "0003_minor_morlocks",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1769783113378,
+      "tag": "0004_graceful_sprite",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1769784127135,
+      "tag": "0005_gigantic_tempest",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1769791997125,
+      "tag": "0006_dashing_cardiac",
+      "breakpoints": true
     }
   ]
 }

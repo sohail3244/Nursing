@@ -10,6 +10,7 @@ import Button from "../../components/common/Button";
 import CourseCard from "../../components/common/CoursesCard";
 
 const CollegeDetails = () => {
+  
   const { id } = useParams();
   const navigate = useNavigate();
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -31,21 +32,36 @@ const CollegeDetails = () => {
 
 
   // Function to ensure data is an array
-  const ensureArray = (data) => {
-    if (!data) return [];
-    if (Array.isArray(data)) return data;
-    if (typeof data === "string") {
-      try {
-        const parsed = JSON.parse(data);
-        return Array.isArray(parsed) ? parsed : [parsed];
-      } catch (e) {
-        return data.split(",").map((item) => item.trim());
+const ensureArray = (value) => {
+  if (!value) return [];
+
+  // Case 1: Already array
+  if (Array.isArray(value)) return value;
+
+  // Case 2: JSON string (most common)
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+
+      // Sometimes backend sends string inside string
+      if (typeof parsed === "string") {
+        return JSON.parse(parsed);
       }
+
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+      // fallback: comma separated
+      return value.split(",").map(v => v.trim());
     }
-    return [];
-  };
+  }
+
+  return [];
+};
+
+
 
   const facilities = ensureArray(college?.facilities);
+
   const gallery = ensureArray(college?.gallery);
   // Backend se agar courses array aa raha hai toh:
 
@@ -122,10 +138,14 @@ const CollegeDetails = () => {
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-y-3">
                 {facilities.map((f, i) => (
-                  <div key={i} className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-                    <CheckCircle2 size={16} className="text-emerald-500 shrink-0" /> {f}
-                  </div>
-                ))}
+  <div
+    key={i}
+    className="flex items-center gap-2 text-gray-700 text-sm font-medium"
+  >
+    <CheckCircle2 size={16} className="text-emerald-500 shrink-0" />
+    {f}
+  </div>
+))}
               </div>
             </section>
 
