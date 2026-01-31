@@ -19,9 +19,9 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
         { name: 'Dashboard', path: '/admin', icon: <LayoutDashboard size={22} /> },
         { name: 'Colleges', path: '/admin/admin-colleges', icon: <GraduationCap size={22} /> },
         { name: 'Courses', path: '/admin/admin-courses', icon: <BookOpen size={22} /> },
-        // { name: 'Students', path: '/admin/students', icon: <Users size={22} /> },
         { name: 'Blog', path: '/admin/admin-blog', icon: <Newspaper size={22} /> },
         { name: 'Leads', path: '/admin/leads', icon: <UserPlus size={22} /> },
+        { name: 'Audit Logs', path: '/admin/audit-logs', icon: <Users size={22} /> },
     ];
 
 

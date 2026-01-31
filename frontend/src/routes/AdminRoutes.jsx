@@ -10,6 +10,7 @@ import AdminCourses from "../pages/Admin/AdminCourses";
 import AdminBlog from "../pages/Admin/AdminBlog";
 import AdminLayout from "../layouts/AdminLayout";
 import Leads from "../pages/Admin/Leads";
+import AuditLogs from "../pages/Admin/AuditLogs";
 
 const AdminRoutes = () => {
   const isAuth = useSelector((state) => state.auth.isAuthenticated);
@@ -33,6 +34,7 @@ const AdminRoutes = () => {
         <Route path="admin-courses" element={<AdminCourses />} />
         <Route path="admin-blog" element={<AdminBlog />} />
         <Route path="leads" element={<Leads />} />
+        <Route path="audit-logs" element={<AuditLogs />} />
       </Route>
     </Routes>
   );

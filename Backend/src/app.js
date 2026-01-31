@@ -10,6 +10,7 @@ import courseRoutes from "./routes/course.route.js";
 import blogRoutes from "./routes/blog.route.js";
 import path from "path";
 import leadRoutes from "./routes/lead.route.js";
+import auditRoutes from "./routes/audit.routes.js";
 
 
 
@@ -43,6 +44,7 @@ app.use("/v1/college", collegeRoutes);
 app.use("/v1/course", courseRoutes);
 app.use("/v1/blog", blogRoutes);
 app.use("/v1/leads", leadRoutes);
+app.use("/v1/audit-logs", auditRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "/uploads")));
 
 

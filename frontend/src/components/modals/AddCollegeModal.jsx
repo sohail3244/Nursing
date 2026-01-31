@@ -149,8 +149,13 @@ function CollegeModal({
   };
 
   Object.entries(processedData).forEach(([key, value]) => {
+  if (Array.isArray(value)) {
+    data.append(key, JSON.stringify(value)); // ✅ FIX
+  } else {
     data.append(key, value);
-  });
+  }
+});
+
 
   if (selectedThumbnail) {
     data.append("thumbnail", selectedThumbnail);

@@ -36,13 +36,19 @@ export const useAddCollege = () => {
 
   return useMutation({
     mutationFn: (formData) =>
-      api.post("/college", formData),
+      api.post("/college", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
 
     onSuccess: () => {
       queryClient.invalidateQueries(["colleges"]);
     },
   });
 };
+
+
 
 /* ===========================
    UPDATE COLLEGE
@@ -52,13 +58,18 @@ export const useUpdateCollege = () => {
 
   return useMutation({
     mutationFn: ({ id, data }) =>
-      api.put(`/college/${id}`, data),
+      api.put(`/college/${id}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
 
     onSuccess: () => {
       queryClient.invalidateQueries(["colleges"]);
     },
   });
 };
+
 
 /* ===========================
    DELETE COLLEGE
