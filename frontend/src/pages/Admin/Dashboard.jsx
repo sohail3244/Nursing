@@ -7,35 +7,31 @@ import {
   ArrowUpRight, 
   MoreVertical 
 } from 'lucide-react';
+import { useMe } from '../../hooks/useUser';
 
 function Dashboard() {
   const brandDark = "#1a237e";
   const brandPurple = "#6739b7";
 
-  // Dummy data for recent applications
-  const recentApplications = [
-    { id: "APP001", student: "Devika", college: "Vijaya College Of Nursing", status: "Pending", date: "24 Jan 2026" },
-    { id: "APP002", student: "Parvathi Reji", college: "Parabrahma College", status: "Approved", date: "23 Jan 2026" },
-    { id: "APP003", student: "Athulya A", college: "Mother College of Nursing", status: "Rejected", date: "22 Jan 2026" },
-  ];
+  
+  const { data, isLoading } = useMe();
+
+  if (isLoading) return null;
+
 
   return (
     <div className="p-4 md:p-8 bg-[#fbfbff] min-h-screen font-sans">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black" style={{ color: brandDark }}>
-            Welcome back, Taiyab!
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">Here's what's happening with your nursing admissions today.</p>
-        </div>
-        <button 
-          className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-bold transition-transform hover:scale-105 shadow-lg shadow-purple-200"
-          style={{ backgroundColor: brandPurple }}
-        >
-          <TrendingUp size={18} />
-          Generate Report
-        </button>
+      <h1 className="text-2xl md:text-3xl font-black" style={{ color: brandDark }}>
+        Welcome back, {data?.data?.name}!
+      </h1>
+      <p className="text-gray-500 text-sm mt-1">
+        Here's what's happening with your nursing admissions today.
+      </p>
+    </div>
+        
       </div>
 
       {/* Stats Overview Grid */}
@@ -94,51 +90,7 @@ function Dashboard() {
       </div>
 
       {/* Recent Activity Table */}
-      <div className="bg-white rounded-[2.5rem] border border-purple-50 shadow-sm overflow-hidden">
-        <div className="p-6 md:p-8 border-b border-gray-50 flex justify-between items-center">
-          <h2 className="text-xl font-bold" style={{ color: brandDark }}>Recent Applications</h2>
-          <button className="text-[#6739b7] font-bold text-sm hover:underline transition-all">View All</button>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-gray-50 text-gray-400 text-[11px] uppercase tracking-widest">
-              <tr>
-                <th className="px-8 py-4">Student</th>
-                <th className="px-8 py-4">College</th>
-                <th className="px-8 py-4">Date</th>
-                <th className="px-8 py-4">Status</th>
-                <th className="px-8 py-4 text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {recentApplications.map((app) => (
-                <tr key={app.id} className="hover:bg-purple-50/30 transition-colors">
-                  <td className="px-8 py-5">
-                    <div className="font-bold text-gray-800 text-sm">{app.student}</div>
-                    <div className="text-[10px] text-gray-400">{app.id}</div>
-                  </td>
-                  <td className="px-8 py-5 text-sm text-gray-600">{app.college}</td>
-                  <td className="px-8 py-5 text-sm text-gray-500">{app.date}</td>
-                  <td className="px-8 py-5">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
-                      app.status === 'Approved' ? 'bg-green-100 text-green-600' : 
-                      app.status === 'Pending' ? 'bg-yellow-100 text-yellow-600' : 
-                      'bg-red-100 text-red-600'
-                    }`}>
-                      {app.status}
-                    </span>
-                  </td>
-                  <td className="px-8 py-5 text-center">
-                    <button className="text-gray-400 hover:text-[#6739b7] p-1">
-                      <MoreVertical size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      
     </div>
   );
 }

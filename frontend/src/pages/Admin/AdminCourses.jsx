@@ -23,20 +23,30 @@ function AdminCourses() {
     setIsModalOpen(true);
   };
 
-  const handleFormSubmit = (formData) => {
-    const mutation = editingCourse ? updateMutation : addMutation;
-
-    mutation.mutate(
-      editingCourse ? { id: editingCourse.id, ...formData } : formData, 
+const handleFormSubmit = (formData) => {
+  if (editingCourse) {
+    updateMutation.mutate(
+      {
+        id: editingCourse.id,
+        data: formData,   // ✅ IMPORTANT
+      },
       {
         onSuccess: () => {
-          toast.success(`Course ${editingCourse ? 'updated' : 'added'} successfully`);
+          toast.success("Course updated successfully");
           setIsModalOpen(false);
         },
-        onError: (err) => toast.error(err?.response?.data?.message || "Operation failed")
       }
     );
-  };
+  } else {
+    addMutation.mutate(formData, {
+      onSuccess: () => {
+        toast.success("Course added successfully");
+        setIsModalOpen(false);
+      },
+    });
+  }
+};
+
 
   // ... (handleDelete logic remains same)
   const handleDelete = (id) => {

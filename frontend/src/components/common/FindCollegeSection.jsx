@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from './Button';
 import { LayoutGrid } from 'lucide-react';
+import { useCollegeSearch } from '../../hooks/useCollegeSearch';
+import { useNavigate } from 'react-router-dom';
 
 const FindCollegeSection = () => {
   const brandColor = "#6739b7";
+   const [input, setInput] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    if (!input.trim()) return;
+
+    // 👉 redirect to colleges page with query
+    navigate(`/colleges?search=${encodeURIComponent(input)}`);
+  };
+
 
   return (
     <section className="w-full bg-[#fbf9ff] py-12 md:py-20 px-4 sm:px-6 md:px-12 overflow-hidden">
@@ -52,17 +64,25 @@ const FindCollegeSection = () => {
                 </div>
 
                 <input
-                  type="text"
-                  placeholder="Search Colleges..."
-                  className="flex-1 px-3 py-3 text-gray-700 outline-none text-base md:text-lg bg-transparent border-l-0 sm:border-l border-gray-100 ml-0 sm:ml-2 w-full"
-                />
+  type="text"
+  placeholder="Search college, course, city..."
+  value={input}
+  onChange={(e) => setInput(e.target.value)}
+  className="flex-1 px-3 py-3 text-gray-700 outline-none text-base md:text-lg bg-transparent border-l-0 sm:border-l border-gray-100 ml-0 sm:ml-2 w-full"
+/>
+
               </div>
 
               {/* Search Button: Full width on mobile, auto width on desktop */}
               <div className="w-full sm:w-auto">
-                <Button className="w-full sm:w-auto px-10 py-3.5 rounded-xl sm:rounded-full shadow-lg">
-                  Search
-                </Button>
+               <Button
+  onClick={handleSearch}
+  className="w-full sm:w-auto px-10 py-3.5 rounded-xl sm:rounded-full shadow-lg"
+>
+  Search
+</Button>
+
+
               </div>
             </div>
           </div>
@@ -76,6 +96,7 @@ const FindCollegeSection = () => {
             className="w-full h-auto opacity-80"
           />
         </div>
+
 
       </div>
     </section>

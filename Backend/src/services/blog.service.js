@@ -3,7 +3,6 @@ import { blogsTable } from "../models/blog.schema.js";
 import { eq } from "drizzle-orm";
 
 export const createBlog = async (data) => {
-  // 🔍 check duplicate code
   const existing = await db
     .select()
     .from(blogsTable)

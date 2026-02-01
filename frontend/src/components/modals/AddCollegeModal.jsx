@@ -29,7 +29,6 @@ function CollegeModal({
   const [galleryPreviews, setGalleryPreviews] = useState([]);
   const [selectedCourses, setSelectedCourses] = useState([]);
   const { data: availableCourses = [], isLoading } = useCourses();
-  
 
   const [formData, setFormData] = useState({
     name: "",
@@ -37,7 +36,6 @@ function CollegeModal({
     description: "",
     sector: "Private",
     genderAcceptance: "Co-ed",
-    establishedYear: "",
     state: "",
     district: "",
     city: "",
@@ -53,10 +51,10 @@ function CollegeModal({
   });
 
   useEffect(() => {
-  return () => {
-    galleryPreviews.forEach(url => URL.revokeObjectURL(url));
-  };
-}, [galleryPreviews]);
+    return () => {
+      galleryPreviews.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [galleryPreviews]);
 
   useEffect(() => {
     if (editingCollege) {
@@ -69,7 +67,6 @@ function CollegeModal({
         facilities: facilitiesStr,
         coursesCount: editingCollege.coursesCount?.toString() || "",
         experienceYears: editingCollege.experienceYears?.toString() || "",
-        establishedYear: editingCollege.establishedYear?.toString() || "",
         studentsCount: editingCollege.studentsCount?.toString() || "",
       });
 
@@ -90,7 +87,6 @@ function CollegeModal({
       description: "",
       sector: "Private",
       genderAcceptance: "Co-ed",
-      establishedYear: "",
       state: "",
       district: "",
       city: "",
@@ -112,15 +108,14 @@ function CollegeModal({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
- const handleGalleryChange = (e) => {
-  const files = Array.from(e.target.files);
+  const handleGalleryChange = (e) => {
+    const files = Array.from(e.target.files);
 
-  setSelectedGallery((prev) => [...prev, ...files]);
+    setSelectedGallery((prev) => [...prev, ...files]);
 
-  const previews = files.map((file) => URL.createObjectURL(file));
-  setGalleryPreviews((prev) => [...prev, ...previews]);
-};
-
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setGalleryPreviews((prev) => [...prev, ...previews]);
+  };
 
   const handleCourseToggle = (courseId) => {
     setSelectedCourses((prev) =>
@@ -130,45 +125,41 @@ function CollegeModal({
     );
   };
 
- const handleFormSubmit = (e) => {
-  e.preventDefault();
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
 
-  const data = new FormData();
+    const data = new FormData();
 
-  const processedData = {
-    ...formData,
-    establishedYear: parseInt(formData.establishedYear) || null,
-    coursesCount: parseInt(formData.coursesCount) || 0,
-    experienceYears: parseInt(formData.experienceYears) || 0,
-    studentsCount: parseInt(formData.studentsCount) || 0,
-    facilities: formData.facilities
-      .split(",")
-      .map(f => f.trim())
-      .filter(Boolean),
-    courseIds: selectedCourses,
+    const processedData = {
+      ...formData,
+      coursesCount: parseInt(formData.coursesCount) || 0,
+      experienceYears: parseInt(formData.experienceYears) || 0,
+      studentsCount: parseInt(formData.studentsCount) || 0,
+      facilities: formData.facilities
+        .split(",")
+        .map((f) => f.trim())
+        .filter(Boolean),
+      courseIds: selectedCourses,
+    };
+
+    Object.entries(processedData).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        data.append(key, JSON.stringify(value)); // ✅ FIX
+      } else {
+        data.append(key, value);
+      }
+    });
+
+    if (selectedThumbnail) {
+      data.append("thumbnail", selectedThumbnail);
+    }
+
+    selectedGallery.forEach((file) => {
+      data.append("gallery", file);
+    });
+
+    onSubmit(data);
   };
-
-  Object.entries(processedData).forEach(([key, value]) => {
-  if (Array.isArray(value)) {
-    data.append(key, JSON.stringify(value)); // ✅ FIX
-  } else {
-    data.append(key, value);
-  }
-});
-
-
-  if (selectedThumbnail) {
-    data.append("thumbnail", selectedThumbnail);
-  }
-
-  selectedGallery.forEach((file) => {
-  data.append("gallery", file);
-});
-
-
-  onSubmit(data);
-};
-
 
   if (!isOpen) return null;
 
@@ -267,26 +258,24 @@ function CollegeModal({
           )}
 
           {/* Section 3: Detailed Stats & Enums */}
+          {/* Section 3: Detailed Stats & Enums */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-gray-50 p-8 rounded-[2rem]">
+            {/* Sector */}
             <div className="space-y-1">
               <FieldLabel label="Sector" />
-              <div className="relative">
-                <Building2
-                  className="absolute left-3 top-3.5 text-gray-400"
-                  size={16}
-                />
-                <select
-                  name="sector"
-                  value={formData.sector}
-                  onChange={handleInputChange}
-                  className="input-style pl-10"
-                >
-                  <option value="Private">Private</option>
-                  <option value="Government">Government</option>
-                  <option value="Semi-Govt">Semi-Govt</option>
-                </select>
-              </div>
+              <select
+                name="sector"
+                value={formData.sector}
+                onChange={handleInputChange}
+                className="input-style"
+              >
+                <option value="Private">Private</option>
+                <option value="Government">Government</option>
+                <option value="Semi-Govt">Semi-Govt</option>
+              </select>
             </div>
+
+            {/* Acceptance */}
             <div className="space-y-1">
               <FieldLabel label="Acceptance" />
               <select
@@ -300,37 +289,44 @@ function CollegeModal({
                 <option value="Girls">Girls</option>
               </select>
             </div>
+
+            {/* Experience Years ✅ */}
             <div className="space-y-1">
-              <FieldLabel label="Est. Year" />
-              <div className="relative">
-                <Calendar
-                  className="absolute left-3 top-3.5 text-gray-400"
-                  size={16}
-                />
-                <input
-                  type="number"
-                  name="establishedYear"
-                  value={formData.establishedYear}
-                  onChange={handleInputChange}
-                  className="input-style pl-10"
-                />
-              </div>
+              <FieldLabel label="Experience (Years)" />
+              <input
+                type="number"
+                name="experienceYears"
+                value={formData.experienceYears}
+                onChange={handleInputChange}
+                className="input-style"
+                placeholder="e.g. 25"
+              />
             </div>
+
+            {/* Courses Count ✅ */}
+            <div className="space-y-1">
+              <FieldLabel label="Courses Count" />
+              <input
+                type="number"
+                name="coursesCount"
+                value={formData.coursesCount}
+                onChange={handleInputChange}
+                className="input-style"
+                placeholder="e.g. 12"
+              />
+            </div>
+
+            {/* Students Count */}
             <div className="space-y-1">
               <FieldLabel label="Students" />
-              <div className="relative">
-                <Users
-                  className="absolute left-3 top-3.5 text-gray-400"
-                  size={16}
-                />
-                <input
-                  type="number"
-                  name="studentsCount"
-                  value={formData.studentsCount}
-                  onChange={handleInputChange}
-                  className="input-style pl-10"
-                />
-              </div>
+              <input
+                type="number"
+                name="studentsCount"
+                value={formData.studentsCount}
+                onChange={handleInputChange}
+                className="input-style"
+                placeholder="e.g. 2500"
+              />
             </div>
           </div>
 
@@ -532,16 +528,16 @@ function CollegeModal({
             </button>
             <Button
               type="submit"
-  disabled={isMutating}
-  className="flex-[2] px-8 py-4 bg-[#6739b7] text-white rounded-2xl font-bold hover:bg-[#5a32a3] shadow-xl shadow-purple-200 flex items-center justify-center gap-3 disabled:opacity-70 active:scale-95 transition-all"
->
-  {isMutating ? (
-    <Loader2 className="animate-spin" />
-  ) : editingCollege ? (
-    "Update Profile"
-  ) : (
-    "Confirm Registration"
-  )}
+              disabled={isMutating}
+              className="flex-[2] px-8 py-4 bg-[#6739b7] text-white rounded-2xl font-bold hover:bg-[#5a32a3] shadow-xl shadow-purple-200 flex items-center justify-center gap-3 disabled:opacity-70 active:scale-95 transition-all"
+            >
+              {isMutating ? (
+                <Loader2 className="animate-spin" />
+              ) : editingCollege ? (
+                "Update Profile"
+              ) : (
+                "Confirm Registration"
+              )}
             </Button>
           </div>
         </form>

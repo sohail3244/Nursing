@@ -1,7 +1,13 @@
 import { Router } from "express";
-import { addBlog, getAllBlogs, removeBlog } from "../controller/blog.controller.js";
-import { verifyToken, isAdmin } from "../middlewares/auth.middleware.js";
+import {
+  addBlog,
+  getAllBlogs,
+  removeBlog,
+  updateBlog,
+} from "../controller/blog.controller.js";
+
 import { upload } from "../middlewares/multer.middleware.js";
+import { verifyToken, isAdmin } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.js";
 import { createBlogSchema } from "../validation/blog.validation.js";
 
@@ -11,12 +17,22 @@ router.post(
   "/",
   verifyToken,
   isAdmin,
-  upload("blogs").single("image"), // ✅ direct multer
+  upload("blogs").single("image"),
+  
   addBlog
 );
 
 router.get("/", getAllBlogs);
 
 router.delete("/:id", verifyToken, isAdmin, removeBlog);
+
+router.put(
+  "/:id",
+  verifyToken,
+  isAdmin,
+  upload("blogs").single("image"),
+  updateBlog
+);
+
 
 export default router;

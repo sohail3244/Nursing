@@ -1,148 +1,171 @@
-import React, { useState, useEffect } from 'react';
-import { X, FileText, Image as ImageIcon, Loader2, Trash2 } from 'lucide-react';
-import { useRef } from "react";
-
+import React, { useState, useEffect, useRef } from "react";
+import { X, ImageIcon, Loader2, UploadCloud, Trash2 } from "lucide-react";
 
 function BlogModal({ isOpen, onClose, onSubmit, editingBlog, isLoading }) {
   const fileInputRef = useRef(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [formData, setFormData] = useState({
-    title: '',
-    code: '',
-    description: ''
+    title: "",
+    code: "",
+    description: "",
   });
 
-  // Jab Modal khule ya editingBlog change ho
- useEffect(() => {
-  if (!isOpen) return;
+  // Theme Colors consistent with your other pages
+  const brandColor = "#6739b7";
+  const primaryBlue = "#1a237e";
 
-  if (editingBlog) {
-    setFormData({
-      title: editingBlog.title || "",
-      code: editingBlog.code || "",
-      description: editingBlog.description || "",
-    });
-    setPreviewUrl(editingBlog.image || null);
-  }
-}, [editingBlog, isOpen]);
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
+  useEffect(() => {
+    if (editingBlog) {
+      setFormData({
+        title: editingBlog.title,
+        code: editingBlog.code,
+        description: editingBlog.description,
+      });
+      setPreview(editingBlog.image
+        ? `${import.meta.env.VITE_API_URL}/uploads/blogs/${editingBlog.image}`
+        : null
+      );
+    } else {
+      // Reset form if opening for new blog
+      setFormData({ title: "", code: "", description: "" });
+      setPreview(null);
+      setImage(null);
     }
+  }, [editingBlog, isOpen]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("title", formData.title);
+    data.append("code", formData.code);
+    data.append("description", formData.description);
+    if (image) data.append("image", image);
+
+    await onSubmit(data);
   };
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  const data = new FormData();
-  data.append("title", formData.title);
-  data.append("code", formData.code);
-  data.append("description", formData.description);
-
-  if (selectedFile) {
-    data.append("image", selectedFile);
-  }
-
-  await onSubmit(data); // 🔥 await MUST
-
-  // reset
-  setFormData({ title: "", code: "", description: "" });
-  setSelectedFile(null);
-  setPreviewUrl(null);
-};
-
-
-
-
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-[#1a237e]/20 backdrop-blur-md">
-      <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in duration-200">
-        <div className="px-8 pt-8 pb-4 flex justify-between items-center border-b border-gray-50">
-          <h2 className="text-xl font-black text-[#1a237e] flex items-center gap-2">
-            <FileText className="text-[#6739b7]" /> 
-            {editingBlog ? 'Update Post' : 'New Blog Post'}
+    <div className="fixed inset-0 bg-[#1a237e]/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden border border-gray-100 animate-in fade-in zoom-in duration-200">
+        
+        {/* Modal Header */}
+        <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+          <h2 className="text-xl font-bold text-[#1a237e]">
+            {editingBlog ? "Update Blog Entry" : "Create New Blog"}
           </h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <X size={20} className="text-gray-400" />
+          <button 
+            onClick={onClose} 
+            className="p-1.0 rounded-full hover:bg-red-50 hover:text-red-500 transition-colors text-gray-400"
+          >
+            <X size={24} />
           </button>
         </div>
-        
-        <form onSubmit={handleSubmit} className="p-8 space-y-5">
-          <div className="grid grid-cols-2 gap-5">
-            <div className="col-span-2 md:col-span-1">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Post Title</label>
-              <input 
-                required 
-                value={formData.title} 
-                onChange={(e) => setFormData({...formData, title: e.target.value})} 
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-[#6739b7]" 
-                placeholder="Enter headline" 
+
+        {/* Modal Body */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-sm font-semibold text-gray-700 ml-1">Title</label>
+              <input
+                required
+                placeholder="Ex: Future of Nursing"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#6739b7] focus:border-transparent outline-none transition-all"
               />
-            </div>
-            <div className="col-span-2 md:col-span-1">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">URL / Short Code</label>
-              <input 
-                required 
-                value={formData.code} 
-                onChange={(e) => setFormData({...formData, code: e.target.value.toLowerCase().replace(/\s+/g, '-')})} 
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-[#6739b7] font-mono text-sm" 
-                placeholder="e.g. tech-trends-2024" 
-              />
-            </div>
-            
-            <div className="col-span-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Cover Image</label>
-              <div className="mt-1 relative group">
-                {previewUrl ? (
-                  <div className="relative h-32 w-full rounded-2xl overflow-hidden border border-gray-100">
-                    <img src={previewUrl} className="w-full h-full object-cover" alt="Preview" />
-                    <button 
-                      type="button"
-                      onClick={() => {setPreviewUrl(null); setSelectedFile(null);}}
-                      className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-100 border-dashed rounded-2xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-                    <ImageIcon size={24} className="text-gray-300 mb-2" />
-                    <p className="text-xs text-gray-500 font-medium">Upload thumbnail image</p>
-                    <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
-                  </label>
-                )}
-              </div>
             </div>
 
-            <div className="col-span-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Content / Description</label>
-              <textarea 
-                required 
-                rows={6}
-                value={formData.description} 
-                onChange={(e) => setFormData({...formData, description: e.target.value})} 
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-[#6739b7] resize-none" 
-                placeholder="Write your story here..."
+            <div className="space-y-1">
+              <label className="text-sm font-semibold text-gray-700 ml-1">Category Code</label>
+              <input
+                required
+                placeholder="Ex: NUR-2024"
+                value={formData.code}
+                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#6739b7] focus:border-transparent outline-none transition-all"
               />
             </div>
           </div>
 
-          <div className="flex gap-3 pt-4">
-            <button type="button" onClick={onClose} className="flex-1 px-4 py-3 border border-gray-100 rounded-xl font-bold text-gray-500 hover:bg-gray-50">Cancel</button>
-            <button 
-              type="submit" 
-              disabled={isLoading}
-              className="flex-1 px-4 py-3 bg-[#6739b7] text-white rounded-xl font-bold hover:bg-[#5a32a3] shadow-lg disabled:opacity-70 flex items-center justify-center gap-2"
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-gray-700 ml-1">Description</label>
+            <textarea
+              required
+              rows={4}
+              placeholder="Write your blog content here..."
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#6739b7] focus:border-transparent outline-none transition-all resize-none"
+            />
+          </div>
+
+          {/* Improved Image Upload UI */}
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-gray-700 ml-1">Cover Image</label>
+            <div 
+              onClick={() => fileInputRef.current.click()}
+              className={`relative group cursor-pointer border-2 border-dashed rounded-xl transition-all flex flex-col items-center justify-center overflow-hidden
+                ${preview ? 'border-[#6739b7] h-48' : 'border-gray-300 hover:border-[#6739b7] hover:bg-purple-50 h-32'}`}
             >
-              {isLoading && <Loader2 size={16} className="animate-spin" />}
-              {editingBlog ? 'Save Changes' : 'Publish Blog'}
+              {preview ? (
+                <>
+                  <img src={preview} className="w-full h-full object-cover" alt="Preview" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                    <p className="text-white text-sm font-medium flex items-center gap-2">
+                      <UploadCloud size={18} /> Change Image
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center space-y-2">
+                  <div className="p-2 bg-purple-100 rounded-full inline-block text-[#6739b7]">
+                    <ImageIcon size={24} />
+                  </div>
+                  <p className="text-sm text-gray-500">Click to upload image</p>
+                </div>
+              )}
+              
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={(e) => {
+                  if (e.target.files[0]) {
+                    setImage(e.target.files[0]);
+                    setPreview(URL.createObjectURL(e.target.files[0]));
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Footer Actions */}
+          <div className="pt-4 border-t border-gray-100 flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="flex-[2] bg-[#1a237e] hover:bg-[#283593] text-white px-4 py-2.5 rounded-xl font-semibold shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  Processing...
+                </>
+              ) : (
+                editingBlog ? "Update Blog" : "Publish Blog"
+              )}
             </button>
           </div>
         </form>

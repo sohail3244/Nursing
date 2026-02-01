@@ -22,8 +22,9 @@ export const useAddBlog = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (formData) => {
-      return await api.post("/blog", formData);
+    mutationFn: (data) => {
+      console.log("🔥 API HIT");
+      return api.post("/blog", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["blogs"]);
@@ -57,19 +58,12 @@ export const useUpdateBlog = () => {
 
   return useMutation({
     mutationFn: async ({ id, data }) => {
-      const formData = new FormData();
-      formData.append("title", data.title);
-      formData.append("code", data.code);
-      formData.append("description", data.description);
-
-      if (data.image) {
-        formData.append("image", data.image);
-      }
-
-      return api.put(`/blog/${id}`, formData);
+      // ✅ data is already FormData
+      return api.put(`/blog/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["blogs"]);
     },
   });
 };
+

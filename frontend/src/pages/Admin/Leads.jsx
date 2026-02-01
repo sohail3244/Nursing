@@ -94,9 +94,7 @@ function Leads() {
                   <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center">
-                    Action
-                  </th>
+                  
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -142,11 +140,6 @@ function Leads() {
                         <Calendar size={14} />
                         {new Date(lead.createdAt).toLocaleDateString()}
                       </div>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <button className="p-2 text-gray-400 hover:text-[#6739b7] hover:bg-indigo-50 rounded-lg transition-colors">
-                        <MoreVertical size={18} />
-                      </button>
                     </td>
                   </tr>
                 ))}

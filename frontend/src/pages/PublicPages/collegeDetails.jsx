@@ -117,7 +117,7 @@ const ensureArray = (value) => {
         {/* 3. Central Icon Stats */}
         <div className="grid grid-cols-3 gap-4 py-12 max-w-3xl mx-auto">
           <CenterStat icon={<Users className="text-[#5F259F]/70" size={40} />} value={`${college.studentsCount || '0'} +`} label="Students" />
-          <CenterStat icon={<ExperienceIcon className="text-[#5F259F]/70" size={40} />} value={`${college.experienceYears || '0'} +`} label="Years Experience" />
+          <CenterStat icon={<ExperienceIcon className="text-[#5F259F]/70" size={40} />} value={`${college.experienceYears || '0'} `} label="Years Experience" />
           <CenterStat icon={<LayoutGrid className="text-[#5F259F]/70" size={40} />} value={`${college.coursesCount || '0'} +`} label="Courses" />
         </div>
 

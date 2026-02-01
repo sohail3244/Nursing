@@ -5,22 +5,117 @@ import {
   createCourse,
 } from "../services/course.service.js";
 
+import { createAuditLog } from "../services/audit.service.js";
+
+/* ============================
+   ➕ ADD COURSE
+============================ */
 export async function addCourse(req, res) {
-  await createCourse(req.body);
-  res.json({ success: true, message: "Course added" });
+  try {
+    await createCourse(req.body);
+
+    // ✅ AUDIT LOG
+    await createAuditLog({
+      action: "CREATE",
+      module: "Course",
+      description: `Course created: ${req.body.name}`,
+      userAgent: req.headers["user-agent"],
+    });
+
+    res.json({ success: true, message: "Course added" });
+  } catch (error) {
+    console.error("ADD COURSE ERROR:", error);
+
+    await createAuditLog({
+      action: "FAILED_CREATE",
+      module: "Course",
+      description: `Failed to create course: ${req.body.name || "Unknown"}`,
+      userAgent: req.headers["user-agent"],
+    });
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
 
+/* ============================
+   📄 GET ALL COURSES
+============================ */
 export async function getAllCourses(req, res) {
-  const data = await getCourses();
-  res.json({ success: true, data });
+  try {
+    const data = await getCourses();
+
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
 
+/* ============================
+   ✏️ UPDATE COURSE
+============================ */
 export async function editCourse(req, res) {
-  await updateCourse(req.params.id, req.body);
-  res.json({ success: true, message: "Course updated" });
+  try {
+    await updateCourse(req.params.id, req.body);
+
+    await createAuditLog({
+      action: "UPDATE",
+      module: "Course",
+      description: `Course updated: ID ${req.params.id}`,
+      userAgent: req.headers["user-agent"],
+    });
+
+    res.json({ success: true, message: "Course updated" });
+  } catch (error) {
+    console.error("UPDATE COURSE ERROR:", error);
+
+    await createAuditLog({
+      action: "FAILED_UPDATE",
+      module: "Course",
+      description: `Failed to update course ID: ${req.params.id}`,
+      userAgent: req.headers["user-agent"],
+    });
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
 
+/* ============================
+   ❌ DELETE COURSE
+============================ */
 export async function removeCourse(req, res) {
-  await deleteCourse(req.params.id);
-  res.json({ success: true, message: "Course deleted" });
+  try {
+    await deleteCourse(req.params.id);
+
+    await createAuditLog({
+      action: "DELETE",
+      module: "Course",
+      description: `Course deleted: ID ${req.params.id}`,
+      userAgent: req.headers["user-agent"],
+    });
+
+    res.json({ success: true, message: "Course deleted" });
+  } catch (error) {
+    console.error("DELETE COURSE ERROR:", error);
+
+    await createAuditLog({
+      action: "FAILED_DELETE",
+      module: "Course",
+      description: `Failed to delete course ID: ${req.params.id}`,
+      userAgent: req.headers["user-agent"],
+    });
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }

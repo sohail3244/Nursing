@@ -37,9 +37,7 @@ export const useAddCollege = () => {
   return useMutation({
     mutationFn: (formData) =>
       api.post("/college", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        
       }),
 
     onSuccess: () => {

@@ -43,10 +43,10 @@ const handleLogout = () => {
         <div className="flex items-center gap-2 md:gap-5">
           
           {/* Notifications */}
-          <button className="relative p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
+          {/* <button className="relative p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
             <Bell size={20} />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-          </button>
+          </button> */}
 
           {/* Vertical Divider */}
           <div className="h-8 w-[1px] bg-gray-100 mx-1 hidden sm:block"></div>
@@ -58,8 +58,8 @@ const handleLogout = () => {
               className="flex items-center gap-2 p-1 md:pl-2 md:pr-1 rounded-full hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100 outline-none"
             >
               <div className="hidden md:block text-right mr-1">
-                <p className="text-xs font-bold" style={{ color: brandDark }}>Admin User</p>
-                <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Super Admin</p>
+                <p className="text-xs font-bold" style={{ color: brandDark }}>Admin </p>
+                
               </div>
               
               <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
@@ -74,17 +74,17 @@ const handleLogout = () => {
 
             {/* Profile Dropdown Menu */}
             <div className={`absolute right-0 mt-3 w-56 bg-white border border-gray-100 shadow-xl rounded-2xl py-2 transition-all duration-200 transform origin-top-right ${isProfileOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}>
-              <div className="px-4 py-3 border-b border-gray-50">
+              {/* <div className="px-4 py-3 border-b border-gray-50">
                 <p className="text-sm font-bold text-gray-800">Taiyab Ali</p>
                 <p className="text-[11px] text-gray-500 truncate">admin@mynursingadmission.com</p>
-              </div>
+              </div> */}
               
-              <NavLink to="/admin/settings" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-[#6739b7] transition-colors">
+              {/* <NavLink to="/admin/settings" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-[#6739b7] transition-colors">
                 <User size={16} /> My Profile
               </NavLink>
               <NavLink to="/admin/settings" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-[#6739b7] transition-colors">
                 <Settings size={16} /> Account Settings
-              </NavLink>
+              </NavLink> */}
               
               <div className="border-t border-gray-50 mt-2 pt-2">
                 <button
