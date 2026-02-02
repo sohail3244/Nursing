@@ -63,12 +63,24 @@ function CollegeModal({
         : editingCollege.facilities || "";
 
       setFormData({
-        ...editingCollege,
-        facilities: facilitiesStr,
-        coursesCount: editingCollege.coursesCount?.toString() || "",
-        experienceYears: editingCollege.experienceYears?.toString() || "",
-        studentsCount: editingCollege.studentsCount?.toString() || "",
-      });
+  name: editingCollege.name || "",
+  code: editingCollege.code || "",
+  description: editingCollege.description || "",
+  sector: editingCollege.sector || "Private",
+  genderAcceptance: editingCollege.genderAcceptance || "Co-ed",
+  state: editingCollege.state || "",
+  district: editingCollege.district || "",
+  city: editingCollege.city || "",
+  address: editingCollege.address || "",
+  googleMapLink: editingCollege.googleMapLink || "",
+  affiliation: editingCollege.affiliation || "",
+  approvedBy: editingCollege.approvedBy || "",
+  youtubeVideo: editingCollege.youtubeVideo || "",
+  facilities: facilitiesStr,
+  coursesCount: editingCollege.coursesCount?.toString() || "",
+  experienceYears: editingCollege.experienceYears?.toString() || "",
+  studentsCount: editingCollege.studentsCount?.toString() || "",
+});
 
       // Setting existing course IDs
       setSelectedCourses(editingCollege.courseIds || []);
@@ -141,14 +153,19 @@ function CollegeModal({
         .filter(Boolean),
       courseIds: selectedCourses,
     };
+for (let pair of data.entries()) {
+  console.log(pair[0], pair[1]);
+}
 
     Object.entries(processedData).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        data.append(key, JSON.stringify(value)); // ✅ FIX
-      } else {
-        data.append(key, value);
-      }
-    });
+  if (value === undefined || value === null || value === "") return;
+
+  if (Array.isArray(value)) {
+    data.append(key, JSON.stringify(value));
+  } else {
+    data.append(key, value);
+  }
+});
 
     if (selectedThumbnail) {
       data.append("thumbnail", selectedThumbnail);

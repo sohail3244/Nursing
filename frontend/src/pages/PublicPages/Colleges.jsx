@@ -8,7 +8,7 @@ import {
   AlertCircle,
   Building2,
 } from "lucide-react";
-import { useColleges } from "../../hooks/useCollege";
+import { useColleges, useCollegesByCourse } from "../../hooks/useCollege";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCollegeSearch } from "../../hooks/useCollegeSearch";
 
@@ -18,17 +18,32 @@ const Colleges = () => {
 
   const [params] = useSearchParams();
   const search = params.get("search");
+  const courseId = params.get("course");
 
-  const {
-    data: searchData,
-    isLoading,
-    isError,
-    error,
-  } = useCollegeSearch(search);
+  // 🔍 Search colleges
+const {
+  data: searchData,
+  isLoading: loadingSearch,
+  isError,
+  error,
+} = useCollegeSearch(search);
 
-  const { data: allColleges, isLoading: loadingAll } = useColleges();
+// 🎓 Course colleges
+const {
+  data: courseData,
+  isLoading: loadingCourse,
+} = useCollegesByCourse(courseId);
 
-  const collegesList = search ? searchData || [] : allColleges?.data || [];
+// 📄 All colleges
+const {
+  data: allColleges,
+  isLoading: loadingAll,
+} = useColleges();
+
+  const collegesList = courseId
+  ? courseColleges?.data || []
+  : allColleges?.data || [];
+
 
   // React Query Hook call
 
@@ -101,18 +116,29 @@ const Colleges = () => {
         )}
 
         {/* Data Grid */}
-      {isLoading && (
+      {/* Loading */}
+{isLoading && (
   <div className="flex justify-center py-20">
     <Loader2 className="h-10 w-10 animate-spin text-[#6739b7]" />
   </div>
 )}
 
+{/* Error */}
+{!isLoading && isError && (
+  <div className="bg-red-50 text-red-600 p-6 rounded-xl border border-red-100 flex items-center justify-center gap-3">
+    <AlertCircle className="h-5 w-5" />
+    <p className="font-medium">Error: {error?.message}</p>
+  </div>
+)}
+
+{/* No Data */}
 {!isLoading && collegesList.length === 0 && (
   <div className="text-center py-24 text-gray-400">
     No colleges found
   </div>
 )}
 
+{/* Data Grid */}
 {!isLoading && collegesList.length > 0 && (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     {collegesList.map((college) => (
@@ -145,6 +171,7 @@ const Colleges = () => {
     ))}
   </div>
 )}
+
 
       </div>
     </div>

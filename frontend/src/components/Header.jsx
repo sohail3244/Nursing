@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import ApplyNowModal from './modals/ApplyNowModal';
 import Button from './common/Button';
+import { useCourses } from '../hooks/useCourse';
 
 function Header() {
     const [isOpen, setIsOpen] = useState(false);
@@ -9,17 +10,12 @@ function Header() {
     const brandColor = "#6739b7";
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const navLinkStyles = ({ isActive }) => 
-        `font-medium transition-colors hover:text-[#6739b7] ${
-            isActive ? `text-[#6739b7] border-b-2 border-[#6739b7] pb-1 font-bold` : 'text-gray-600'
+    const navLinkStyles = ({ isActive }) =>
+        `font-medium transition-colors hover:text-[#6739b7] ${isActive ? `text-[#6739b7] border-b-2 border-[#6739b7] pb-1 font-bold` : 'text-gray-600'
         }`;
 
-    const courseItems = [
-        { name: "B.Sc Nursing", path: "/courses/bsc-nursing" },
-        { name: "Post B.Sc Nursing", path: "/courses/post-bsc-nursing" },
-        { name: "M.Sc Nursing", path: "/courses/msc-nursing" },
-        { name: "GNM", path: "/courses/gnm" },
-    ];
+    const { data, isLoading } = useCourses();
+    const courses = data?.data || [];
 
     return (
         <>
@@ -46,7 +42,7 @@ function Header() {
                         <nav className="hidden lg:flex items-center gap-4 xl:gap-8">
                             <NavLink to="/" className={navLinkStyles}>Home</NavLink>
                             <NavLink to="/colleges" className={navLinkStyles}>Colleges</NavLink>
-                            
+
                             <div className="relative group h-full flex items-center">
                                 <div className={`${navLinkStyles({ isActive: false })} cursor-pointer`}>
                                     <div className="flex items-center gap-1">
@@ -58,11 +54,22 @@ function Header() {
                                 </div>
 
                                 <div className="absolute top-[100%] left-0 w-56 bg-white shadow-xl rounded-lg border border-gray-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
-                                    {courseItems.map((item, index) => (
-                                        <NavLink key={index} to={item.path} className="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#6739b7] transition-colors">
-                                            {item.name}
-                                        </NavLink>
-                                    ))}
+                                    {isLoading ? (
+  <div className="px-4 py-2 text-sm text-gray-400">
+    Loading courses...
+  </div>
+) : (
+  courses.map((course) => (
+    <NavLink
+      key={course.id}
+      to={`/colleges?course=${course.id}`}
+      className="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#6739b7] transition-colors"
+    >
+      {course.name}
+    </NavLink>
+  ))
+)}
+
                                 </div>
                             </div>
 
@@ -98,11 +105,11 @@ function Header() {
                     <div className="px-4 pt-4 pb-10 space-y-1 bg-white">
                         <NavLink to="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700">Home</NavLink>
                         <NavLink to="/colleges" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700">Colleges</NavLink>
-                        
+
                         {/* MOBILE ACCORDION FOR COURSES */}
                         <div className="px-3 py-2">
-                            <button 
-                                onClick={() => setIsCourseOpen(!isCourseOpen)} 
+                            <button
+                                onClick={() => setIsCourseOpen(!isCourseOpen)}
                                 className="flex items-center justify-between w-full text-base font-medium text-gray-700 outline-none"
                             >
                                 <span>Courses</span>
@@ -110,14 +117,18 @@ function Header() {
                                     <path d="M19 9l-7 7-7-7" strokeWidth={2} />
                                 </svg>
                             </button>
-                            
+
                             {/* Jab isCourseOpen true hoga, tabhi sub-items dikhenge */}
                             <div className={`transition-all duration-300 overflow-hidden ${isCourseOpen ? 'max-h-60 mt-2 opacity-100' : 'max-h-0 opacity-0'}`}>
                                 <div className="pl-4 space-y-1 border-l-2 border-purple-100">
                                     {courseItems.map((item, index) => (
-                                        <NavLink key={index} to={item.path} onClick={() => { setIsOpen(false); setIsCourseOpen(false); }} className="block py-2 text-sm text-gray-500 hover:text-[#6739b7]">
-                                            {item.name}
-                                        </NavLink>
+                                        <NavLink
+  to={`/colleges?course=${item.id}`}
+  className="block px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#6739b7]"
+>
+  {item.name}
+</NavLink>
+
                                     ))}
                                 </div>
                             </div>

@@ -56,11 +56,7 @@ export const useUpdateCollege = () => {
 
   return useMutation({
     mutationFn: ({ id, data }) =>
-      api.put(`/college/${id}`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }),
+      api.put(`/college/${id}`, data),
 
     onSuccess: () => {
       queryClient.invalidateQueries(["colleges"]);
@@ -85,13 +81,13 @@ export const useDeleteCollege = () => {
 };
 
 
-export const useCollegeCourses = (collegeId) => {
+export const useCollegesByCourse = (courseId) => {
   return useQuery({
-    queryKey: ["college-courses", collegeId],
+    queryKey: ["colleges-by-course", courseId],
     queryFn: async () => {
-      const res = await api.get(`/college/${collegeId}/courses`);
-      return res.data; // 👈 IMPORTANT
+      const res = await api.get(`/college/by-course?courseId=${courseId}`);
+      return res.data;
     },
-    enabled: !!collegeId,
+    enabled: !!courseId,
   });
 };

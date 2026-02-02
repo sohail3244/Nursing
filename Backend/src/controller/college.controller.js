@@ -140,15 +140,24 @@ export const editCollege = async (req, res) => {
     };
 
     if (thumbnail) updatedData.thumbnail = thumbnail;
-    if (gallery.length) updatedData.gallery = gallery;
+    if (gallery.length > 0) {
+  updatedData.gallery = gallery;
+}
 
-    if (req.body.facilities) {
-      updatedData.facilities = JSON.parse(req.body.facilities);
-    }
 
-    if (req.body.courseIds) {
-      updatedData.courseIds = JSON.parse(req.body.courseIds);
-    }
+    // ✅ Facilities (safe parse)
+if (req.body.facilities) {
+  updatedData.facilities = Array.isArray(req.body.facilities)
+    ? req.body.facilities
+    : JSON.parse(req.body.facilities);
+}
+
+// ✅ Course IDs (safe parse)
+if (req.body.courseIds) {
+  updatedData.courseIds = Array.isArray(req.body.courseIds)
+    ? req.body.courseIds
+    : JSON.parse(req.body.courseIds);
+}
 
     await updateCollegeService(req.params.id, updatedData);
 
@@ -246,3 +255,38 @@ export const searchColleges = async (req, res) => {
     });
   }
 };
+
+// 🎓 GET COLLEGES BY COURSE
+// 🎓 GET COLLEGES BY COURSE
+export const getCollegesByCourse = async (req, res) => {
+  try {
+    const { course } = req.query;
+
+    if (!course) {
+      return res.json({
+        success: true,
+        data: [],
+      });
+    }
+
+    const colleges = await db
+      .select()
+      .from(collegesTable)
+      .where(
+        sql`${collegesTable.courseIds} LIKE ${`%"${course}"%`}`
+      );
+
+    res.json({
+      success: true,
+      data: colleges,
+    });
+
+  } catch (error) {
+    console.error("COURSE FILTER ERROR:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
