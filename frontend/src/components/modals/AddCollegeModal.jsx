@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useCourses } from "../../hooks/useCourse";
 import Button from "../common/Button";
+import { useIndiaCities, useIndiaStates } from "../../hooks/useIndia";
 
 function CollegeModal({
   isOpen,
@@ -50,6 +51,15 @@ function CollegeModal({
     facilities: "",
   });
 
+  const { data: statesRes, isLoading: loadingStates } = useIndiaStates();
+  const { data: citiesRes, isLoading: loadingCities } = useIndiaCities(
+    formData.state,
+  );
+
+  // 3️⃣ derived values
+  const states = statesRes?.data || [];
+  const cities = citiesRes?.data || [];
+
   useEffect(() => {
     return () => {
       galleryPreviews.forEach((url) => URL.revokeObjectURL(url));
@@ -63,24 +73,24 @@ function CollegeModal({
         : editingCollege.facilities || "";
 
       setFormData({
-  name: editingCollege.name || "",
-  code: editingCollege.code || "",
-  description: editingCollege.description || "",
-  sector: editingCollege.sector || "Private",
-  genderAcceptance: editingCollege.genderAcceptance || "Co-ed",
-  state: editingCollege.state || "",
-  district: editingCollege.district || "",
-  city: editingCollege.city || "",
-  address: editingCollege.address || "",
-  googleMapLink: editingCollege.googleMapLink || "",
-  affiliation: editingCollege.affiliation || "",
-  approvedBy: editingCollege.approvedBy || "",
-  youtubeVideo: editingCollege.youtubeVideo || "",
-  facilities: facilitiesStr,
-  coursesCount: editingCollege.coursesCount?.toString() || "",
-  experienceYears: editingCollege.experienceYears?.toString() || "",
-  studentsCount: editingCollege.studentsCount?.toString() || "",
-});
+        name: editingCollege.name || "",
+        code: editingCollege.code || "",
+        description: editingCollege.description || "",
+        sector: editingCollege.sector || "Private",
+        genderAcceptance: editingCollege.genderAcceptance || "Co-ed",
+        state: editingCollege.state || "",
+        district: editingCollege.district || "",
+        city: editingCollege.city || "",
+        address: editingCollege.address || "",
+        googleMapLink: editingCollege.googleMapLink || "",
+        affiliation: editingCollege.affiliation || "",
+        approvedBy: editingCollege.approvedBy || "",
+        youtubeVideo: editingCollege.youtubeVideo || "",
+        facilities: facilitiesStr,
+        coursesCount: editingCollege.coursesCount?.toString() || "",
+        experienceYears: editingCollege.experienceYears?.toString() || "",
+        studentsCount: editingCollege.studentsCount?.toString() || "",
+      });
 
       // Setting existing course IDs
       setSelectedCourses(editingCollege.courseIds || []);
@@ -153,19 +163,19 @@ function CollegeModal({
         .filter(Boolean),
       courseIds: selectedCourses,
     };
-for (let pair of data.entries()) {
-  console.log(pair[0], pair[1]);
-}
+    for (let pair of data.entries()) {
+      console.log(pair[0], pair[1]);
+    }
 
     Object.entries(processedData).forEach(([key, value]) => {
-  if (value === undefined || value === null || value === "") return;
+      if (value === undefined || value === null || value === "") return;
 
-  if (Array.isArray(value)) {
-    data.append(key, JSON.stringify(value));
-  } else {
-    data.append(key, value);
-  }
-});
+      if (Array.isArray(value)) {
+        data.append(key, JSON.stringify(value));
+      } else {
+        data.append(key, value);
+      }
+    });
 
     if (selectedThumbnail) {
       data.append("thumbnail", selectedThumbnail);
@@ -399,24 +409,46 @@ for (let pair of data.entries()) {
               <MapPin size={14} /> Location & Address
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input
+              <select
+                name="state"
+                value={formData.state}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    state: e.target.value,
+                    city: "", // 🔥 state change = city reset
+                  }))
+                }
+                className="input-style"
+              >
+                <option value="">Select State</option>
+                {states.map((s) => (
+                  <option key={s.name} value={s.name}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+              <select
                 name="city"
-                placeholder="City"
                 value={formData.city}
+                disabled={!formData.state}
                 onChange={handleInputChange}
                 className="input-style"
-              />
+              >
+                
+                <option value="">
+                  {loadingCities ? "Loading cities..." : "Select City"}
+                </option>
+                {cities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
               <input
                 name="district"
                 placeholder="District"
                 value={formData.district}
-                onChange={handleInputChange}
-                className="input-style"
-              />
-              <input
-                name="state"
-                placeholder="State"
-                value={formData.state}
                 onChange={handleInputChange}
                 className="input-style"
               />

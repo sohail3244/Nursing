@@ -8,6 +8,7 @@ import {
   getCollegeCourses,
   searchColleges,
   getCollegesByCourse,
+  getCollegesByLocation,
 } from "../controller/college.controller.js";
 
 import { verifyToken, isAdmin } from "../middlewares/auth.middleware.js";
@@ -44,6 +45,7 @@ router.put(
 
 router.get("/college/by-course", getCollegesByCourse);
 router.get("/search", searchColleges);
+router.get("/filter", getCollegesByLocation);
 
 router.get("/", getColleges);
 router.get("/:id/courses", getCollegeCourses);

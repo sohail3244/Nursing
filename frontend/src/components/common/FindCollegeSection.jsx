@@ -65,7 +65,7 @@ const FindCollegeSection = () => {
 
                 <input
   type="text"
-  placeholder="Search college, course, city..."
+  placeholder="Search college"
   value={input}
   onChange={(e) => setInput(e.target.value)}
   className="flex-1 px-3 py-3 text-gray-700 outline-none text-base md:text-lg bg-transparent border-l-0 sm:border-l border-gray-100 ml-0 sm:ml-2 w-full"

@@ -211,36 +211,45 @@ export const getCollegeCourses = async (req, res) => {
 
 export const searchColleges = async (req, res) => {
   try {
-    const { q } = req.query;
+    const { q, state, city } = req.query;
 
-    if (!q) {
-      return res.json({ success: true, data: [] });
-    }
+    let conditions = [];
 
-    const keyword = `%${q.toLowerCase()}%`;
-
-    // 🔍 Search courses
-    const courses = await db
-      .select({ id: coursesTable.id })
-      .from(coursesTable)
-      .where(sql`LOWER(${coursesTable.name}) LIKE ${keyword}`);
-
-    const courseIds = courses.map(c => c.id);
-
-    // 🔍 College Search (SAFE for MySQL 5.x)
-    const colleges = await db
-      .select()
-      .from(collegesTable)
-      .where(
-        sql`
+    // 🔍 Keyword search
+    if (q) {
+      const keyword = `%${q.toLowerCase()}%`;
+      conditions.push(
+        sql`(
           LOWER(${collegesTable.name}) LIKE ${keyword}
           OR LOWER(${collegesTable.city}) LIKE ${keyword}
           OR LOWER(${collegesTable.state}) LIKE ${keyword}
-          OR ${courseIds.length
-            ? sql`(${collegesTable.courseIds} LIKE ${`%${courseIds[0]}%`})`
-            : sql`1=0`}
-        `
+        )`
       );
+    }
+
+    // 📍 State filter
+    if (state) {
+      conditions.push(
+        sql`LOWER(${collegesTable.state}) = ${state.toLowerCase()}`
+      );
+    }
+
+    // 🏙️ City filter
+    if (city) {
+      conditions.push(
+        sql`LOWER(${collegesTable.city}) = ${city.toLowerCase()}`
+      );
+    }
+
+    // ❌ No filters → empty response
+    if (conditions.length === 0) {
+      return res.json({ success: true, data: [] });
+    }
+
+    const colleges = await db
+      .select()
+      .from(collegesTable)
+      .where(sql.join(conditions, sql` AND `));
 
     res.json({
       success: true,
@@ -255,6 +264,7 @@ export const searchColleges = async (req, res) => {
     });
   }
 };
+
 
 // 🎓 GET COLLEGES BY COURSE
 // 🎓 GET COLLEGES BY COURSE
@@ -290,3 +300,34 @@ export const getCollegesByCourse = async (req, res) => {
   }
 };
 
+
+export const getCollegesByLocation = async (req, res) => {
+  try {
+    const { state, city } = req.query;
+
+    let query = sql`1=1`;
+
+    if (state) {
+      query = sql`${query} AND LOWER(${collegesTable.state}) = LOWER(${state})`;
+    }
+
+    if (city) {
+      query = sql`${query} AND LOWER(${collegesTable.city}) = LOWER(${city})`;
+    }
+
+    const colleges = await db
+      .select()
+      .from(collegesTable)
+      .where(query);
+
+    res.json({
+      success: true,
+      data: colleges,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

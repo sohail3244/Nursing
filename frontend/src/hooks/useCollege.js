@@ -85,9 +85,21 @@ export const useCollegesByCourse = (courseId) => {
   return useQuery({
     queryKey: ["colleges-by-course", courseId],
     queryFn: async () => {
-      const res = await api.get(`/college/by-course?courseId=${courseId}`);
+      const res = await api.get(`/college/college/by-course?course=${courseId}`);
       return res.data;
     },
     enabled: !!courseId,
+  });
+};
+
+
+export const useCollegeCourses = (collegeId) => {
+  return useQuery({
+    queryKey: ["college-courses", collegeId],
+    queryFn: async () => {
+      const res = await api.get(`/college/${collegeId}/courses`);
+      return res.data;
+    },
+    enabled: !!collegeId,
   });
 };

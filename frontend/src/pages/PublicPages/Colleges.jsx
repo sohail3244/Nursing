@@ -11,55 +11,58 @@ import {
 import { useColleges, useCollegesByCourse } from "../../hooks/useCollege";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCollegeSearch } from "../../hooks/useCollegeSearch";
+import { useIndiaCities, useIndiaStates } from "../../hooks/useIndia";
 
 const Colleges = () => {
   const brandColor = "#6739b7";
   const navigate = useNavigate();
-
+  const [selectedState, setSelectedState] = React.useState(null);
+  const [selectedCity, setSelectedCity] = React.useState(null);
   const [params] = useSearchParams();
   const search = params.get("search");
-  const courseId = params.get("course");
+  const state = params.get("state");
+  const city = params.get("city");
+
 
   // 🔍 Search colleges
 const {
-  data: searchData,
-  isLoading: loadingSearch,
+  data: filteredData,
+  isLoading: loadingFiltered,
   isError,
   error,
-} = useCollegeSearch(search);
+} = useCollegeSearch({
+  search,
+  state,
+  city,
+});
 
-// 🎓 Course colleges
-const {
-  data: courseData,
-  isLoading: loadingCourse,
-} = useCollegesByCourse(courseId);
-
-// 📄 All colleges
 const {
   data: allColleges,
   isLoading: loadingAll,
-} = useColleges();
-
-  const collegesList = courseId
-  ? courseColleges?.data || []
-  : allColleges?.data || [];
+} = useColleges({
+  enabled: !search && !state && !city, // 🔥 KEY
+});
 
 
-  // React Query Hook call
+  let collegesList = [];
 
-  // Backend response structure handling
+if (search || state || city) {
+  collegesList = filteredData?.data || [];
+} else {
+  collegesList = allColleges?.data || [];
+}
 
-  const states = [
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Delhi (NCT)",
-    "Goa",
-    "Gujarat",
-    "Karnataka",
-    "Maharashtra",
-  ];
+
+
+const isLoading = loadingFiltered || loadingAll;
+
+  const { data: statesRes, isLoading: loadingStates } = useIndiaStates();
+const states = statesRes?.data || [];
+const { data: citiesRes, isLoading: loadingCities } =
+  useIndiaCities(state)
+
+const cities = citiesRes?.data || [];
+
 
   return (
     <div className="bg-white min-h-screen font-sans">
@@ -78,21 +81,46 @@ const {
         </div>
 
         {/* State Selection Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-          {states.map((state) => (
-            <div
-              key={state}
-              className="group bg-[#fbf9ff] hover:bg-white border border-gray-100 p-5 rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-md hover:border-[#6739b7]"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-[#1a237e] group-hover:text-[#6739b7] text-sm">
-                  Colleges in {state}
-                </span>
-                <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-[#6739b7]" />
-              </div>
-            </div>
-          ))}
-        </div>
+       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+  {states.map((s) => (
+    <button
+    
+  key={s.name}
+  onClick={() =>
+    navigate(`/colleges?state=${encodeURIComponent(s.name)}`)
+  }
+  
+>
+  Nursing Colleges in {s.name}
+</button>
+
+  ))}
+</div>
+
+{state && (
+  <div className="flex flex-wrap gap-3 mb-12">
+    {cities.map((cityName) => (
+      <button
+        key={cityName}
+        onClick={() =>
+          navigate(
+            `/colleges?state=${encodeURIComponent(state)}&city=${encodeURIComponent(cityName)}`
+          )
+        }
+        className={`px-4 py-2 rounded-full text-sm font-bold border
+          ${city === cityName
+            ? "bg-[#6739b7] text-white"
+            : "bg-white text-gray-600"}
+        `}
+      >
+        Nursing Colleges in {cityName}
+      </button>
+    ))}
+  </div>
+)}
+
+
+
 
         <div className="mb-8 border-l-4 border-[#6739b7] pl-4">
           <h2 className="text-2xl font-bold text-[#1a237e]">
@@ -100,13 +128,8 @@ const {
           </h2>
         </div>
 
-        {/* Loading & Error States */}
-        {isLoading && (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="h-10 w-10 animate-spin text-[#6739b7]" />
-            <p className="mt-4 text-gray-500 font-medium">Fetching data...</p>
-          </div>
-        )}
+       
+        
 
         {isError && (
           <div className="bg-red-50 text-red-600 p-6 rounded-xl border border-red-100 flex items-center justify-center gap-3">
