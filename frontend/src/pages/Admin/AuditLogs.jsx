@@ -1,16 +1,27 @@
 import React, { useState } from 'react';
 import { Clock, Activity, Monitor, ShieldCheck, Search } from 'lucide-react';
 import { useAuditLogs } from '../../hooks/useAuditLog';
+import Pagination from '../../components/common/Pagination';
 
 const AuditLogs = () => {
   const { logs, loading, error } = useAuditLogs();
   const [searchTerm, setSearchTerm] = useState("");
+const ITEMS_PER_PAGE = 10;
 
- const filteredLogs = logs.filter(
+const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredLogs = logs.filter(
     (log) =>
       log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.module.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const totalPages = Math.ceil(filteredLogs.length / ITEMS_PER_PAGE);
+
+const paginatedLogs = filteredLogs.slice(
+  (currentPage - 1) * ITEMS_PER_PAGE,
+  currentPage * ITEMS_PER_PAGE
+);
+
 
   const getActionStyle = (action) => {
     switch (action.toUpperCase()) {
@@ -23,25 +34,25 @@ const AuditLogs = () => {
 
 
   if (loading) {
-  return (
-    <div className="p-10 text-center text-gray-500">
-      Loading audit logs...
-    </div>
-  );
-}
+    return (
+      <div className="p-10 text-center text-gray-500">
+        Loading audit logs...
+      </div>
+    );
+  }
 
-if (error) {
-  return (
-    <div className="p-10 text-center text-red-500">
-      {error}
-    </div>
-  );
-}
+  if (error) {
+    return (
+      <div className="p-10 text-center text-red-500">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen font-sans">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
@@ -56,7 +67,7 @@ if (error) {
 
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input 
+            <input
               type="text"
               placeholder="Search by action or module..."
               className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none w-full md:w-64"
@@ -79,13 +90,23 @@ if (error) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {logs.map((log) => (
+               {paginatedLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-gray-400" />
-                        {new Date(log.createdAt).toLocaleString()}
+                        {new Date(log.createdAt).toLocaleString("en-IN", {
+                          timeZone: "Asia/Kolkata",
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true,
+                        })}
                       </div>
+
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2.5 py-1 rounded-md text-xs font-bold border ${getActionStyle(log.action)}`}>
@@ -109,7 +130,7 @@ if (error) {
               </tbody>
             </table>
           </div>
-          
+
           {/* Empty State */}
           {logs.length === 0 && (
             <div className="py-20 text-center">
@@ -119,6 +140,14 @@ if (error) {
           )}
         </div>
       </div>
+      <Pagination
+  currentPage={currentPage}
+  totalPages={totalPages}
+  onPageChange={(page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }}
+/>
     </div>
   );
 };

@@ -1,53 +1,42 @@
 import React from 'react';
 import CourseCard from '../../components/common/CoursesCard';
+import { useNavigate } from 'react-router-dom';
+import { useCourses } from '../../hooks/useCourse';
+import { Loader2 } from 'lucide-react';
 
 const PopularCourses = () => {
   const brandPurple = "#6739b7";
   const brandDark = "#1a237e";
+  const navigate = useNavigate();
+  const { data, isLoading } = useCourses();
+  const courses = data?.data || [];
+  const popularCourses = courses.slice(0, 4).map((course, index) => ({
+    id: course.id,
+    displayTitle: course.name,
+    title: course.name,
+    description: `Browse colleges with course ${course.name}`,
+    duration: course.duration || "",
+    path: `/colleges?course=${course.id}`,
+    gradient: [
+      "from-[#6739b7] to-[#1a237e]",
+      "from-[#7b4fd4] to-[#6739b7]",
+      "from-[#1a237e] to-[#4c1d95]",
+      "from-[#6739b7] via-[#5b21b6] to-[#1e1b4b]",
+    ][index % 4],
+  }));
 
-  const courses = [
-    {
-      id: 1,
-      title: "B.Sc Nursing (4 Years)",
-      description: "Browse colleges with course B.Sc Nursing (4 Years)",
-      path: "/courses/bsc-nursing",
-      displayTitle: "B.Sc Nursing",
-      duration: "4 Years",
-      gradient: "from-[#6739b7] to-[#1a237e]" 
-    },
-    {
-      id: 2,
-      title: "Post (B.Sc) Nursing (2 Years)",
-      description: "Browse colleges with course Post (B.Sc) Nursing (2 Years)",
-      path: "/courses/post-bsc-nursing",
-      displayTitle: "Post (B.Sc) Nursing",
-      duration: "2 Years",
-      gradient: "from-[#7b4fd4] to-[#6739b7]"
-    },
-    {
-      id: 3,
-      title: "M.Sc Nursing (2 Years)",
-      description: "Browse colleges with course M.Sc Nursing (2 Years)",
-      path: "/courses/msc-nursing",
-      displayTitle: "M.Sc Nursing",
-      duration: "2 Years",
-      gradient: "from-[#1a237e] to-[#4c1d95]"
-    },
-    {
-      id: 4,
-      title: "GNM - General Nursing (3 Years)",
-      description: "Browse colleges with course GNM - General Nursing (3 Years)",
-      path: "/courses/gnm-nursing",
-      displayTitle: "GNM - General Nursing",
-      duration: "3 Years",
-      gradient: "from-[#6739b7] via-[#5b21b6] to-[#1e1b4b]"
-    }
-  ];
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-[#6739b7]" />
+      </div>
+    );
+  }
 
   return (
     <section className="bg-white py-20 px-6 md:px-12 font-sans overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight" style={{ color: brandDark }}>
@@ -60,14 +49,24 @@ const PopularCourses = () => {
 
         {/* Grid using Reusable Card Component */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {courses.map((course) => (
-            <CourseCard
-              key={course.id} 
-              course={course} 
-              brandDark={brandDark} 
-              brandPurple={brandPurple} 
-            />
-          ))}
+       {isLoading ? (
+  <div className="text-center text-gray-400">Loading courses...</div>
+) : (
+  popularCourses.map((course) => (
+    <div
+      key={course.id}
+      onClick={() => navigate(course.path)}
+      className="cursor-pointer"
+    >
+      <CourseCard
+        course={course}
+        brandDark={brandDark}
+        brandPurple={brandPurple}
+      />
+    </div>
+  ))
+)}
+
         </div>
       </div>
     </section>

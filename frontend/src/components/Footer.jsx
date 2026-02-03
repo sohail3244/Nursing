@@ -2,10 +2,13 @@ import React, { useState } from 'react'; // useState import kiya
 import { NavLink } from 'react-router-dom';
 import EnquireNow from './modals/EnquireNow';
 import ApplyNowModal from './modals/ApplyNowModal'; // ApplyNowModal import kiya
+import { useCourses } from '../hooks/useCourse';
 
 function Footer() {
+  const { data } = useCourses();
+  const courses = data?.data || [];
   const brandColor = "#6739b7";
-  
+
   // Modal ki state control karne ke liye
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -13,16 +16,16 @@ function Footer() {
 
   return (
     <footer className="w-full bg-white font-sans border-t border-gray-100">
-      
+
       {/* 1. Enquire Now Banner Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 mt-10 md:mt-16 mb-12 md:mb-16">
-        <EnquireNow/>
+        <EnquireNow />
       </div>
 
       {/* 2. Main Footer Links Section */}
       <div className="w-full max-w-[95%] lg:max-w-7xl mx-auto px-4 pb-12">
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-y-12 gap-x-4 md:gap-x-8">
-          
+
           {/* Column 1: Brand & Social */}
           <div className="col-span-2 lg:col-span-1 flex flex-col items-center lg:items-start text-center lg:text-left mb-4 lg:mb-0">
             <NavLink to="/" className="flex items-center gap-1 mb-6">
@@ -48,10 +51,42 @@ function Footer() {
           <div className="flex flex-col items-start text-left">
             <h4 className="font-bold text-gray-800 mb-6 text-sm md:text-base uppercase tracking-wider">Quick links</h4>
             <ul className="space-y-4 text-xs md:text-sm text-gray-500">
-              <li><NavLink to="/colleges/karnataka" className={linkStyle}>Colleges in Karnataka</NavLink></li>
-              <li><NavLink to="/colleges/tamil-nadu" className={linkStyle}>Colleges in Tamil Nadu</NavLink></li>
-              <li><NavLink to="/colleges/kerala" className={linkStyle}>Colleges in Kerala</NavLink></li>
-              <li><NavLink to="/colleges/chennai" className={linkStyle}>Colleges in Chennai</NavLink></li>
+              <li>
+                <NavLink
+                  to="/colleges?state=Karnataka"
+                  className={linkStyle}
+                >
+                  Colleges in Karnataka
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/colleges?state=Tamil Nadu"
+                  className={linkStyle}
+                >
+                  Colleges in Tamil Nadu
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/colleges?state=Kerala"
+                  className={linkStyle}
+                >
+                  Colleges in Kerala
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/colleges?state=Tamil Nadu&city=Chennai"
+                  className={linkStyle}
+                >
+                  Colleges in Chennai
+                </NavLink>
+              </li>
+
             </ul>
           </div>
 
@@ -59,10 +94,22 @@ function Footer() {
           <div className="flex flex-col items-start text-left">
             <h4 className="font-bold text-gray-800 mb-6 text-sm md:text-base uppercase tracking-wider">Courses</h4>
             <ul className="space-y-4 text-xs md:text-sm text-gray-500">
-              <li><NavLink to="/courses/bsc-nursing" className={linkStyle}>B.Sc Nursing</NavLink></li>
-              <li><NavLink to="/courses/post-bsc-nursing" className={linkStyle}>Post (B.Sc) Nursing</NavLink></li>
-              <li><NavLink to="/courses/msc-nursing" className={linkStyle}>M.Sc Nursing</NavLink></li>
-              <li><NavLink to="/courses/gnm" className={linkStyle}>GNM Nursing</NavLink></li>
+              <li>
+                <ul className="space-y-4 text-xs md:text-sm text-gray-500">
+                  {courses.slice(0, 4).map((course) => (
+                    <li key={course.id}>
+                      <NavLink
+                        to={`/colleges?course=${course.id}`}
+                        className={linkStyle}
+                      >
+                        {course.name}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+
+              </li>
+
             </ul>
           </div>
 
@@ -83,15 +130,13 @@ function Footer() {
             <ul className="space-y-4 text-xs md:text-sm text-gray-500">
               <li>
                 {/* Apply Online Button jo modal open karega */}
-                <button 
+                <button
                   onClick={() => setIsModalOpen(true)}
                   className="font-bold text-[#6739b7] hover:opacity-80 transition-opacity cursor-pointer text-left w-full"
                 >
                   Apply Online
                 </button>
               </li>
-              <li><NavLink to="/registration" className={linkStyle}>Registration</NavLink></li>
-              <li><NavLink to="/fees" className={linkStyle}>Fee Structure</NavLink></li>
               <li><NavLink to="/colleges" className={linkStyle}>College List</NavLink></li>
             </ul>
           </div>
@@ -104,9 +149,9 @@ function Footer() {
       </div>
 
       {/* Modal Component ko yahan render kiya */}
-      <ApplyNowModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <ApplyNowModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </footer>
   );

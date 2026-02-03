@@ -67,3 +67,14 @@ export const useUpdateBlog = () => {
   });
 };
 
+// hooks/useBlog.js
+export const useBlogById = (id) => {
+  return useQuery({
+    queryKey: ["blog", id],
+    queryFn: async () => {
+      const res = await api.get(`/blog/${id}`);
+      return res.data;
+    },
+    enabled: !!id,
+  });
+};

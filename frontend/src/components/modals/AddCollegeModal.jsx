@@ -168,14 +168,17 @@ function CollegeModal({
     }
 
     Object.entries(processedData).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === "") return;
+  if (value === undefined || value === null || value === "") return;
 
-      if (Array.isArray(value)) {
-        data.append(key, JSON.stringify(value));
-      } else {
-        data.append(key, value);
-      }
+  if (Array.isArray(value)) {
+    value.forEach((item) => {
+      data.append(`${key}[]`, item);
     });
+  } else {
+    data.append(key, value);
+  }
+});
+
 
     if (selectedThumbnail) {
       data.append("thumbnail", selectedThumbnail);

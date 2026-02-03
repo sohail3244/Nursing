@@ -1,20 +1,21 @@
 import React from 'react';
 import { Home, ChevronRight, LayoutGrid } from 'lucide-react'; // Using lucide-react as requested
 import { useBlogs } from '../../hooks/useBlog';
+import { useNavigate } from 'react-router-dom';
 
 const Blog = () => {
   const brandColor = "#6739b7";
   const brandDark = "#1a237e";
   const { data, isLoading } = useBlogs();
-
+  const navigate = useNavigate();
   
   // Category list based on UI
   const categories = [
     { name: " Blogs", active: true },
-    { name: "Nursing Career", active: false },
-    { name: "Entrance Exams", active: false },
-    { name: "Admission Tips", active: false },
-    { name: "Top Colleges", active: false },
+    // { name: "Nursing Career", active: false },
+    // { name: "Entrance Exams", active: false },
+    // { name: "Admission Tips", active: false },
+    // { name: "Top Colleges", active: false },
   ];
 
  
@@ -74,6 +75,7 @@ const Blog = () => {
           {data?.data?.map((post) => (
 
             <article 
+              onClick={() => navigate(`/blog/${post.id}`)}
               key={post.id} 
               className="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-50 transition-all hover:scale-[1.02] hover:shadow-2xl cursor-pointer group"
             >

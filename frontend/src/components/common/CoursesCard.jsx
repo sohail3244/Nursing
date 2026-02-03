@@ -16,7 +16,7 @@ const CourseCard = ({ course, brandDark, brandPurple }) => {
 
         {/* Floating Badge */}
         <div className="bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3 border border-white/30 shadow-sm">
-          {course.duration} Course
+          {course.duration} Year Course
         </div>
         
         <h3 className="relative z-10 text-2xl font-black text-center leading-tight drop-shadow-md">

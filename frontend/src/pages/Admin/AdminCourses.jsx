@@ -71,34 +71,82 @@ const handleFormSubmit = (formData) => {
       </div>
 
       {/* Table Section */}
-      <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-        {isLoading ? (
-          <div className="flex justify-center p-20"><Loader2 className="animate-spin text-[#6739b7]" /></div>
-        ) : (
-          <table className="w-full text-left">
-             {/* ... table head and body ... */}
-             <tbody className="divide-y divide-gray-50">
-               {courses?.data?.map((course) => (
-                 <tr key={course.id} className="hover:bg-gray-50/50">
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-gray-800">{course.name}</span>
-                        
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 font-mono font-bold text-indigo-600">{course.code}</td>
-                    <td className="px-6 py-4">{course.duration}</td>
-                    <td className="px-6 py-4 italic">{course.eligibility}</td>
-                    <td className="px-6 py-4 text-center">
-                      <button onClick={() => handleOpenModal(course)} className="p-2 text-blue-600"><Pencil size={18}/></button>
-                      <button onClick={() => handleDelete(course.id)} className="p-2 text-red-600"><Trash2 size={18}/></button>
-                    </td>
-                 </tr>
-               ))}
-             </tbody>
-          </table>
-        )}
-      </div>
+     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+  {isLoading ? (
+    <div className="flex justify-center p-20">
+      <Loader2 className="animate-spin text-[#6739b7]" />
+    </div>
+  ) : (
+    <div className="overflow-x-auto">
+      <table className="w-full text-left border-collapse">
+        <thead className="bg-gray-50/50 border-b border-gray-100">
+          <tr>
+            <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+              Course Name
+            </th>
+            <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+              Course Code
+            </th>
+            <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+              Duration
+            </th>
+            <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+              Eligibility
+            </th>
+            <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center">
+              Actions
+            </th>
+          </tr>
+        </thead>
+
+        <tbody className="divide-y divide-gray-50">
+          {courses?.data?.map((course) => (
+            <tr
+              key={course.id}
+              className="hover:bg-gray-50/50 transition-colors"
+            >
+              <td className="px-6 py-4">
+                <span className="font-bold text-gray-800">
+                  {course.name}
+                </span>
+              </td>
+
+              <td className="px-6 py-4 font-mono text-indigo-600 font-bold">
+                {course.code}
+              </td>
+
+              <td className="px-6 py-4 text-sm text-gray-600 font-medium">
+                {course.duration}
+              </td>
+
+              <td className="px-6 py-4 text-sm italic text-gray-600">
+                {course.eligibility}
+              </td>
+
+              <td className="px-6 py-4 text-center">
+                <div className="flex justify-center gap-2">
+                  <button
+                    onClick={() => handleOpenModal(course)}
+                    className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(course.id)}
+                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
+
 
       <Pagination 
         currentPage={page} 

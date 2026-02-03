@@ -63,11 +63,7 @@ const handleLogout = () => {
               </div>
               
               <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
-                <img 
-                  src="https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?q=80&w=100&auto=format&fit=crop" 
-                  alt="Admin" 
-                  className="w-full h-full object-cover"
-                />
+                <User size={20} className="text-purple-600" />
               </div>
               <ChevronDown size={14} className={`text-gray-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
             </button>

@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { useCourses } from '../../hooks/useCourse';
 import { useColleges } from '../../hooks/useCollege';
 import { X } from 'lucide-react';
+import { useIndiaCities, useIndiaStates } from '../../hooks/useIndia';
 
 function ApplyNowModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -16,6 +17,11 @@ function ApplyNowModal({ isOpen, onClose }) {
     course: '',
     college: ''
   });
+  const { data: statesRes } = useIndiaStates();
+  const states = statesRes?.data || [];
+
+  const { data: citiesRes } = useIndiaCities(formData.state);
+  const cities = citiesRes?.data || [];
 
   const { data: coursesData } = useCourses();
   const { data: collegesData } = useColleges();
@@ -25,8 +31,8 @@ function ApplyNowModal({ isOpen, onClose }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ 
-      ...prev, 
+    setFormData(prev => ({
+      ...prev,
       [name]: value,
       // Reset college if course changes
       ...(name === 'course' ? { college: '' } : {})
@@ -53,6 +59,24 @@ function ApplyNowModal({ isOpen, onClose }) {
     });
   };
 
+  const filteredColleges =
+    collegesData?.data?.filter((college) => {
+      const matchState = formData.state
+        ? college.state === formData.state
+        : true;
+
+      const matchCity = formData.city
+        ? college.city === formData.city
+        : true;
+
+      const matchCourse = formData.course
+        ? college.courseIds?.includes(formData.course)
+        : true;
+
+      return matchState && matchCity && matchCourse;
+    }) || [];
+
+
   // Reusable Input Class
   const inputClass = "w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#6739b7] focus:border-transparent outline-none transition-all duration-200 text-gray-800 placeholder:text-gray-400";
   const labelClass = "text-xs font-bold text-[#1a237e] uppercase tracking-wider ml-1 mb-1 block";
@@ -63,7 +87,7 @@ function ApplyNowModal({ isOpen, onClose }) {
 
       <div className="relative bg-white w-full max-w-lg max-h-[95vh] overflow-hidden rounded-[2rem] shadow-2xl">
 
-        
+
         {/* Header */}
         <div className="sticky top-0 bg-white z-10 pt-8 pb-4 text-center border-b border-gray-50">
           <button onClick={onClose} className="absolute top-4 right-6 text-gray-400 hover:text-gray-600 transition-colors">
@@ -74,7 +98,7 @@ function ApplyNowModal({ isOpen, onClose }) {
         </div>
 
         <form className="p-8 space-y-5" onSubmit={handleSubmit}>
-          
+
           {/* Full Name */}
           <div>
             <label className={labelClass}>Full Name *</label>
@@ -87,7 +111,7 @@ function ApplyNowModal({ isOpen, onClose }) {
             <div>
               <label className={labelClass}>Phone Number *</label>
               <input type="tel" maxLength={10} required value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, "")})}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, "") })}
                 placeholder="10-digit number" className={inputClass} />
             </div>
             {/* Email */}
@@ -102,17 +126,56 @@ function ApplyNowModal({ isOpen, onClose }) {
             {/* State */}
             <div>
               <label className={labelClass}>State *</label>
-              <select name="state" required value={formData.state} onChange={handleChange} className={inputClass}>
-                <option value="">Select</option>
-                <option value="Delhi">Delhi</option>
-                <option value="Rajasthan">Rajasthan</option>
+              <select
+                name="state"
+                required
+                value={formData.state}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    state: e.target.value,
+                    city: "",
+                    college: ""
+                  })
+                }
+                className={inputClass}
+              >
+                <option value="">Select State</option>
+                {states.map((s) => (
+                  <option key={s.name} value={s.name}>
+                    {s.name}
+                  </option>
+                ))}
               </select>
+
             </div>
             {/* City */}
             <div>
               <label className={labelClass}>City *</label>
-              <input name="city" required value={formData.city} onChange={handleChange}
-                placeholder="Your City" className={inputClass} />
+              <select
+                name="city"
+                required
+                value={formData.city}
+                disabled={!formData.state}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    city: e.target.value,
+                    college: ""
+                  })
+                }
+                className={`${inputClass} ${!formData.state ? "opacity-50" : ""}`}
+              >
+                <option value="">
+                  {formData.state ? "Select City" : "Select state first"}
+                </option>
+                {cities.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+
             </div>
           </div>
 
@@ -132,18 +195,29 @@ function ApplyNowModal({ isOpen, onClose }) {
           {/* College Select */}
           <div>
             <label className={labelClass}>Preferred College</label>
-            <select 
-              name="college" 
-              value={formData.college} 
-              onChange={handleChange} 
-              disabled={!formData.course}
-              className={`${inputClass} ${!formData.course ? 'opacity-50 cursor-not-allowed bg-gray-100' : ''}`}
+            <select
+              name="college"
+              value={formData.college}
+              onChange={handleChange}
+              disabled={!formData.course || !formData.city}
+              className={`${inputClass} ${!formData.course || !formData.city
+                  ? "opacity-50 cursor-not-allowed bg-gray-100"
+                  : ""
+                }`}
             >
-              <option value="">{formData.course ? "Select a College" : "Select course first"}</option>
-              {collegesData?.data?.map((college) => (
-                <option key={college.id} value={college.id}>{college.name}</option>
+              <option value="">
+                {formData.course && formData.city
+                  ? "Select College"
+                  : "Select state, city & course first"}
+              </option>
+
+              {filteredColleges.map((college) => (
+                <option key={college.id} value={college.id}>
+                  {college.name}
+                </option>
               ))}
             </select>
+
           </div>
 
           <Button
@@ -153,7 +227,7 @@ function ApplyNowModal({ isOpen, onClose }) {
           >
             {isLoading ? "Processing..." : "Submit Inquiry"}
           </Button>
-          
+
           <p className="text-center text-[10px] text-gray-400">By submitting, you agree to our terms and privacy policy.</p>
         </form>
       </div>

@@ -165,3 +165,33 @@ export const removeBlog = async (req, res) => {
     });
   }
 };
+
+
+export const getBlogById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const blog = await db
+      .select()
+      .from(blogsTable)
+      .where(eq(blogsTable.id, id))
+      .limit(1);
+
+    if (!blog.length) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      data: blog[0],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

@@ -1,10 +1,71 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '../common/Button';
+import { useIndiaCities, useIndiaStates } from '../../hooks/useIndia';
+import toast from 'react-hot-toast';
+import { useApply } from '../../hooks/useApply';
 
 const ContactForm = () => {
     // Brand Theme Color constant
     const brandColor = "#6739b7";
     const brandDark = "#1a237e";
+
+
+    const [selectedState, setSelectedState] = useState("");
+    const [selectedCity, setSelectedCity] = useState("");
+
+    const { data: statesRes } = useIndiaStates();
+    const states = statesRes?.data || [];
+
+    const { data: citiesRes } = useIndiaCities(selectedState);
+    const cities = citiesRes?.data || [];
+
+    const [formData, setFormData] = useState({
+        name: "",
+        phone: "",
+        email: "",
+        message: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+    const { mutate, isLoading } = useApply();
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (formData.phone.length < 10) {
+            return toast.error("Please enter a valid phone number");
+        }
+
+        const payload = {
+            name: formData.name.trim(),
+            phone: formData.phone,
+            email: formData.email?.trim() || undefined,
+            state: selectedState,
+            city: selectedCity,
+            message: formData.message?.trim(),
+        };
+
+        mutate(payload, {
+            onSuccess: () => {
+                toast.success("Form submitted successfully");
+                setFormData({
+                    name: "",
+                    phone: "",
+                    email: "",
+                    message: "",
+                });
+                setSelectedState("");
+                setSelectedCity("");
+            },
+            onError: (err) =>
+                toast.error(err.response?.data?.message || "Something went wrong"),
+        });
+    };
 
     return (
         <section className="bg-transparent py-10">
@@ -20,7 +81,7 @@ const ContactForm = () => {
                 </div>
 
                 {/* Form Container */}
-                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <form className="space-y-6" onSubmit={handleSubmit}>
 
                     {/* Full Name Field */}
                     <div className="space-y-2">
@@ -28,11 +89,14 @@ const ContactForm = () => {
                             Full Name *
                         </label>
                         <input
-                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
                             placeholder="Your Name"
-                            className="w-full px-5 py-4 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder:text-gray-300"
-                            style={{ focusRingColor: brandColor }}
+                            className="w-full px-5 py-4 bg-white border border-gray-200 rounded-xl"
                         />
+
                     </div>
 
                     {/* Contact Number Field */}
@@ -42,10 +106,20 @@ const ContactForm = () => {
                         </label>
                         <input
                             type="tel"
+                            name="phone"
+                            maxLength={10}
+                            value={formData.phone}
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    phone: e.target.value.replace(/\D/g, ""),
+                                })
+                            }
+                            required
                             placeholder="Your Contact Number"
-                            className="w-full px-5 py-4 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder:text-gray-300"
-                            style={{ focusRingColor: brandColor }}
+                            className="w-full px-5 py-4 bg-white border border-gray-200 rounded-xl"
                         />
+
                     </div>
 
                     {/* Email Field */}
@@ -55,11 +129,64 @@ const ContactForm = () => {
                         </label>
                         <input
                             type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
                             placeholder="Your Email"
-                            className="w-full px-5 py-4 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder:text-gray-300"
-                            style={{ focusRingColor: brandColor }}
+                            className="w-full px-5 py-4 bg-white border border-gray-200 rounded-xl"
                         />
+
                     </div>
+
+
+                    {/* State Field */}
+                    <div className="space-y-2">
+                        <label className="font-bold text-sm block" style={{ color: brandDark }}>
+                            State *
+                        </label>
+                        <select
+                            required
+                            value={selectedState}
+                            onChange={(e) => {
+                                setSelectedState(e.target.value);
+                                setSelectedCity(""); // reset city
+                            }}
+                            className="w-full px-5 py-4 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 transition-all"
+                        >
+                            <option value="">Select State</option>
+                            {states.map((state) => (
+                                <option key={state.name} value={state.name}>
+                                    {state.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* City Field */}
+                    <div className="space-y-2">
+                        <label className="font-bold text-sm block" style={{ color: brandDark }}>
+                            City *
+                        </label>
+                        <select
+                            required
+                            disabled={!selectedState}
+                            value={selectedCity}
+                            onChange={(e) => setSelectedCity(e.target.value)}
+                            className={`w-full px-5 py-4 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 transition-all ${!selectedState ? "opacity-50 cursor-not-allowed" : ""
+                                }`}
+                        >
+                            <option value="">
+                                {selectedState ? "Select City" : "Select state first"}
+                            </option>
+                            {cities.map((city) => (
+                                <option key={city} value={city}>
+                                    {city}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+
 
                     {/* Message Field */}
                     <div className="space-y-2">
@@ -67,21 +194,26 @@ const ContactForm = () => {
                             Message *
                         </label>
                         <textarea
+                            required
+                            name="message"
                             rows="5"
+                            value={formData.message}
+                            onChange={handleChange}
                             placeholder="Enter Your Message"
-                            className="w-full px-5 py-4 bg-white border border-gray-100 rounded-xl focus:outline-none focus:ring-2 transition-all placeholder:text-gray-300 resize-none"
-                            style={{ focusRingColor: brandColor }}
-                        ></textarea>
+                            className="w-full px-5 py-4 bg-white border border-gray-100 rounded-xl resize-none"
+                        />
+
                     </div>
 
                     {/* Submit Button: Teal changed to Brand Purple */}
                     <Button
                         type="submit"
-                        className="w-full text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all active:scale-[0.98] mt-4 hover:brightness-110"
-
+                        disabled={isLoading}
+                        className="w-full text-white py-4 rounded-xl font-bold text-lg"
                     >
-                        Submit
+                        {isLoading ? "Submitting..." : "Submit"}
                     </Button>
+
                 </form>
             </div>
         </section>

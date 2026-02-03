@@ -251,6 +251,16 @@ export const searchColleges = async (req, res) => {
       .from(collegesTable)
       .where(sql.join(conditions, sql` AND `));
 
+    // ✅ STEP-3: AUDIT LOG ONLY IF RESULT FOUND
+    if (colleges.length > 0) {
+      await createAuditLog({
+        action: "SEARCH",
+        module: "College",
+        description: `College search → q:${q || "-"} | state:${state || "-"} | city:${city || "-"}`,
+        userAgent: req.headers["user-agent"],
+      });
+    }
+
     res.json({
       success: true,
       data: colleges,
@@ -266,7 +276,7 @@ export const searchColleges = async (req, res) => {
 };
 
 
-// 🎓 GET COLLEGES BY COURSE
+
 // 🎓 GET COLLEGES BY COURSE
 export const getCollegesByCourse = async (req, res) => {
   try {

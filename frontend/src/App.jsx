@@ -14,6 +14,7 @@ import PopularColleges from "./pages/PublicPages/PopularColleges";
 import PopularCourses from "./pages/PublicPages/PopularCourses";
 import { Toaster } from "react-hot-toast";
 import CollegeDetails from "./pages/PublicPages/collegeDetails";
+import ViewBlog from "./pages/PublicPages/ViewBlog";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path="popular-courses" element={<PopularCourses />} />
         <Route path="college-details" element={<CollegeDetails />} />
         <Route path="/college/:id" element={<CollegeDetails />} />
+        <Route path="/blog/:id" element={<ViewBlog />} />
       </Route>
 
       {/* 🔐 ADMIN ROUTES */}

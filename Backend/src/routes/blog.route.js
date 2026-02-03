@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   addBlog,
   getAllBlogs,
+  getBlogById,
   removeBlog,
   updateBlog,
 } from "../controller/blog.controller.js";
@@ -23,7 +24,7 @@ router.post(
 );
 
 router.get("/", getAllBlogs);
-
+router.get("/:id", getBlogById);
 router.delete("/:id", verifyToken, isAdmin, removeBlog);
 
 router.put(

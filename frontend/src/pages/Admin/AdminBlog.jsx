@@ -111,10 +111,10 @@ const handleSubmit = (formData) => {
                     {new Date(blog.createdAt).toLocaleDateString()}
                   </span>
                   <div className="flex gap-2">
-                    <button onClick={() => handleOpenModal(blog)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors">
+                    <button onClick={() => handleOpenModal(blog)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                       <Pencil size={18} />
                     </button>
-                    <button onClick={() => handleDelete(blog.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-colors">
+                    <button onClick={() => handleDelete(blog.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                       <Trash2 size={18} />
                     </button>
                   </div>

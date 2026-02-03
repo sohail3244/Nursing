@@ -4,12 +4,23 @@ import { Plus, Pencil, Trash2, Loader2, Image as ImageIcon } from 'lucide-react'
 import toast from 'react-hot-toast';
 import CollegeModal from '../../components/modals/AddCollegeModal';
 import Button from '../../components/common/Button';
+import Pagination from '../../components/common/Pagination';
 
 function AdminColleges() {
+  const ITEMS_PER_PAGE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCollege, setEditingCollege] = useState(null);
 
   const { data: colleges, isLoading } = useColleges();
+  const collegesList = colleges?.data || [];
+
+  const totalPages = Math.ceil(collegesList.length / ITEMS_PER_PAGE);
+
+  const paginatedColleges = collegesList.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
   const createMutation = useAddCollege();
   const updateMutation = useUpdateCollege();
   const deleteMutation = useDeleteCollege();
@@ -54,7 +65,7 @@ function AdminColleges() {
           <h1 className="text-2xl font-black text-[#1a237e]">College Directory</h1>
           <p className="text-sm text-gray-500 font-medium">Manage institution records and profiles</p>
         </div>
-        <Button 
+        <Button
           onClick={() => handleOpenModal()}
           className="flex items-center gap-2 bg-[#6739b7] text-white px-5 py-2.5 rounded-xl hover:bg-[#5a32a3] transition-all shadow-lg shadow-indigo-100 font-bold"
         >
@@ -81,7 +92,7 @@ function AdminColleges() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {colleges?.data?.map((college) => (
+                {paginatedColleges.map((college) => (
                   <tr key={college.id} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -98,12 +109,18 @@ function AdminColleges() {
                     <td className="px-6 py-4 text-sm font-mono text-gray-500">{college.code}</td>
                     <td className="px-6 py-4 text-sm text-gray-600 font-medium">{college.city}, {college.state}</td>
                     <td className="px-6 py-4">
-                      <span className={`text-[10px] px-2.5 py-1 rounded-full font-black uppercase tracking-tighter ${
-                        college.type === 'govt' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                      }`}>
-                        {college.type}
+                      <span
+                        className={`text-[10px] px-2.5 py-1 rounded-full font-black uppercase tracking-tighter ${college.sector === "Government"
+                            ? "bg-green-100 text-green-700"
+                            : college.sector === "Semi-Govt"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-blue-100 text-blue-700"
+                          }`}
+                      >
+                        {college.sector}
                       </span>
                     </td>
+
                     <td className="px-6 py-4">
                       <div className="flex justify-end gap-2 ">
                         <button onClick={() => handleOpenModal(college)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
@@ -124,12 +141,23 @@ function AdminColleges() {
 
       {/* Modal Component Usage */}
       <CollegeModal
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
         editingCollege={editingCollege}
         isMutating={createMutation.isLoading || updateMutation.isLoading}
       />
+
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        />
+      )}
     </div>
   );
 }

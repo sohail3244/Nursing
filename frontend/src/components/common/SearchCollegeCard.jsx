@@ -19,17 +19,17 @@ function SearchCollegeCard() {
   const cities = citiesRes?.data || [];
 
   const handleSearch = () => {
-  if (!selectedState) return;
+    if (!selectedState) return;
 
-  const params = new URLSearchParams();
+    const params = new URLSearchParams();
 
-  params.append("state", selectedState);
-  if (selectedCity) params.append("city", selectedCity);
+    params.append("state", selectedState);
+    if (selectedCity) params.append("city", selectedCity);
 
-  navigate(
-    `/colleges?state=${selectedState || ""}&city=${selectedCity || ""}`
-  );
-};
+    navigate(
+      `/colleges?state=${selectedState || ""}&city=${selectedCity || ""}`
+    );
+  };
 
 
   return (
@@ -44,77 +44,53 @@ function SearchCollegeCard() {
         <div className="space-y-4">
           <div className="relative">
             <select
-  value={selectedState}
-  onChange={(e) => {
-    setSelectedState(e.target.value);
-    setSelectedCity(""); // 🔥 state change = city reset
-  }}
-  className="w-full p-4 bg-white border border-gray-200 rounded-lg"
->
-  <option value="">Select State</option>
-  {states.map((state) => (
-    <option key={state.name} value={state.name}>
-      {state.name}
-    </option>
-  ))}
-</select>
+              value={selectedState}
+              onChange={(e) => {
+                setSelectedState(e.target.value);
+                setSelectedCity(""); // 🔥 state change = city reset
+              }}
+              className="w-full p-4 bg-white border border-gray-200 rounded-lg"
+            >
+              <option value="">Select State</option>
+              {states.map((state) => (
+                <option key={state.name} value={state.name}>
+                  {state.name}
+                </option>
+              ))}
+            </select>
 
             <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-              <svg
-                className="w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+              
             </div>
           </div>
 
           <div className="relative">
             <select
-  value={selectedCity}
-  disabled={!selectedState}
-  onChange={(e) => setSelectedCity(e.target.value)}
-  className="w-full p-4 bg-white border border-gray-200 rounded-lg"
->
-  <option value="">
-    {!selectedState ? "Select State First" : "Select City"}
-  </option>
-  {cities.map((city) => (
-    <option key={city} value={city}>
-      {city}
-    </option>
-  ))}
-</select>
+              value={selectedCity}
+              disabled={!selectedState}
+              onChange={(e) => setSelectedCity(e.target.value)}
+              className="w-full p-4 bg-white border border-gray-200 rounded-lg"
+            >
+              <option value="">
+                {!selectedState ? "Select State First" : "Select City"}
+              </option>
+              {cities.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
 
             <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-              <svg
-                className="w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+             
             </div>
           </div>
 
           {/* Search Button using Reusable Component */}
-          <Button 
-          className="w-full py-4 rounded-xl text-lg mt-2"
-          onClick={handleSearch}>
-            <Search/>
+          <Button
+            className="w-full py-4 rounded-xl text-lg mt-2"
+            onClick={handleSearch}>
+            <Search />
             Search
           </Button>
         </div>
