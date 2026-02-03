@@ -10,11 +10,14 @@ const ITEMS_PER_PAGE = 10;
 
 const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredLogs = logs.filter(
+  const filteredLogs = logs
+  .filter(
     (log) =>
       log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.module.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  )
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   const totalPages = Math.ceil(filteredLogs.length / ITEMS_PER_PAGE);
 
 const paginatedLogs = filteredLogs.slice(
@@ -77,8 +80,9 @@ const paginatedLogs = filteredLogs.slice(
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col min-h-[500px]">
+
+          <div className="overflow-x-auto flex-1">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
@@ -138,16 +142,22 @@ const paginatedLogs = filteredLogs.slice(
               <p className="text-gray-500">No audit logs found.</p>
             </div>
           )}
+
+          
         </div>
       </div>
+      {totalPages > 1 && (
+    <div className="mt-auto border-t border-gray-100 ">
       <Pagination
-  currentPage={currentPage}
-  totalPages={totalPages}
-  onPageChange={(page) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }}
-/>
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => {
+          setCurrentPage(page);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+      />
+    </div>
+  )}
     </div>
   );
 };

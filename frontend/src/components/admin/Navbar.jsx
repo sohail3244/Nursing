@@ -81,7 +81,13 @@ const handleLogout = () => {
               <NavLink to="/admin/settings" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-[#6739b7] transition-colors">
                 <Settings size={16} /> Account Settings
               </NavLink> */}
-              
+              <NavLink
+    to="/admin/profile"
+    onClick={() => setIsProfileOpen(false)}
+    className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-purple-50 hover:text-[#6739b7] transition-colors"
+  >
+    <User size={16} /> View Profile
+  </NavLink>
               <div className="border-t border-gray-50 mt-2 pt-2">
                 <button
   onClick={handleLogout}

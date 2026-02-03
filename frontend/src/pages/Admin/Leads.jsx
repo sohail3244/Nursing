@@ -15,16 +15,34 @@ import {
 import { useLeads } from "../../hooks/useApply";
 import { useColleges } from "../../hooks/useCollege";
 import { useCourses } from "../../hooks/useCourse";
+import Pagination from "../../components/common/Pagination";
 
 function Leads() {
+  const ITEMS_PER_PAGE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
   const [searchTerm, setSearchTerm] = useState("");
   const { data: leads, isLoading } = useLeads();
   const { data: coursesData } = useCourses();
   const { data: collegesData } = useColleges();
-  const filteredLeads = leads?.data?.filter(
-    (lead) =>
-      lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.phone.includes(searchTerm),
+  const filteredLeads = leads?.data
+  ?.filter((lead) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      (lead.name?.toLowerCase() || "").includes(term) ||
+      (lead.phone || "").includes(term) ||
+      (lead.email?.toLowerCase() || "").includes(term) ||
+      (lead.city?.toLowerCase() || "").includes(term) ||
+      (lead.state?.toLowerCase() || "").includes(term)
+    );
+  })
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const totalPages = Math.ceil((filteredLeads?.length || 0) / ITEMS_PER_PAGE);
+
+  const paginatedLeads = filteredLeads?.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
   );
 
   const courseMap = {};
@@ -69,7 +87,8 @@ function Leads() {
       </div>
 
       {/* Main Content */}
-      <div className="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col min-h-[500px]">
+
         {isLoading ? (
           <div className="flex flex-col items-center justify-center p-20 gap-3">
             <Loader2 className="animate-spin text-[#6739b7]" size={32} />
@@ -78,7 +97,7 @@ function Leads() {
             </span>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto flex-1">
             <table className="w-full text-left border-collapse">
               <thead className="bg-gray-50/50 border-b border-gray-100">
                 <tr>
@@ -94,11 +113,10 @@ function Leads() {
                   <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
                     Date
                   </th>
-                  
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {filteredLeads?.map((lead) => (
+                {paginatedLeads?.map((lead) => (
                   <tr
                     key={lead.id}
                     className="hover:bg-gray-50/50 transition-colors group"
@@ -113,7 +131,7 @@ function Leads() {
                             <Phone size={12} /> {lead.phone}
                           </span>
                           <span className="flex items-center gap-1 text-[12px] text-gray-500">
-                            <Mail size={12} /> {lead.email}
+                            <Mail size={12} /> {lead.email || "N/A"}
                           </span>
                         </div>
                       </div>
@@ -121,11 +139,12 @@ function Leads() {
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
                         <span className="flex items-center gap-1.5 text-xs font-bold text-[#6739b7]">
-                          <BookOpen size={14} /> {courseMap[lead.course] || "Not Specified"}
+                          <BookOpen size={14} />{" "}
+                          {courseMap[lead.course] || "Not Specified"}
                         </span>
                         <span className="flex items-center gap-1.5 text-xs text-gray-600">
-                          <School size={14} /> {collegeMap[lead.college] || "Not Specified"}
-
+                          <School size={14} />{" "}
+                          {collegeMap[lead.college] || "Not Specified"}
                         </span>
                       </div>
                     </td>
@@ -145,6 +164,7 @@ function Leads() {
                 ))}
               </tbody>
             </table>
+            
 
             {leads?.data?.length === 0 && (
               <div className="p-20 text-center text-gray-400">
@@ -154,6 +174,16 @@ function Leads() {
           </div>
         )}
       </div>
+      {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => {
+                  setCurrentPage(page);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              />
+            )}
     </div>
   );
 }

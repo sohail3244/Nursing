@@ -1,98 +1,111 @@
-import React from 'react';
-import { 
-  Users, 
-  GraduationCap, 
-  FileText, 
-  TrendingUp, 
-  ArrowUpRight, 
-  MoreVertical 
-} from 'lucide-react';
-import { useMe } from '../../hooks/useUser';
+import React from "react";
+import {
+  Users,
+  GraduationCap,
+  FileText,
+  TrendingUp,
+  Loader2,
+  ArrowUpRight,
+  UserPlus,
+  Newspaper,
+  BookOpen,
+} from "lucide-react";
+import { useMe } from "../../hooks/useUser";
+import { useDashboardStats } from "../../hooks/useDashboard";
 
-function Dashboard() {
+const Dashboard = () => {
   const brandDark = "#1a237e";
-  const brandPurple = "#6739b7";
+  const { data: user } = useMe();
+  const { data: stats, isLoading } = useDashboardStats();
 
-  
-  const { data, isLoading } = useMe();
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#fbfbff]">
+        <Loader2 className="animate-spin text-[#6739b7] mb-4" size={40} />
+        <p className="text-gray-500 font-medium animate-pulse">Loading stats...</p>
+      </div>
+    );
+  }
 
-  if (isLoading) return null;
-
+  const fullName = user?.firstName
+    ? `${user.firstName} ${user.lastName || ""}`
+    : "Admin";
 
   return (
-    <div className="p-4 md:p-8 bg-[#fbfbff] min-h-screen font-sans">
+    <div className="p-6 md:p-12 bg-[#fbfbff] min-h-screen font-sans">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div>
-      <h1 className="text-2xl md:text-3xl font-black" style={{ color: brandDark }}>
-        Welcome back, {data?.data?.name}!
-      </h1>
-      <p className="text-gray-500 text-sm mt-1">
-        Here's what's happening with your nursing admissions today.
-      </p>
-    </div>
-        
+      <div className="mb-12">
+        <h1 className="text-3xl md:text-4xl font-black tracking-tight" style={{ color: brandDark }}>
+          Welcome back, <span className="text-[#6739b7]">{fullName}</span>!
+        </h1>
+        <div className="h-1 w-20 bg-gradient-to-r from-[#1a237e] to-[#6739b7] mt-3 rounded-full"></div>
       </div>
 
-      {/* Stats Overview Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div className="bg-white p-6 rounded-[2rem] border border-purple-50 shadow-sm">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-purple-50 rounded-2xl text-[#6739b7]">
-              <GraduationCap size={24} />
-            </div>
-            <span className="text-green-500 text-xs font-bold flex items-center bg-green-50 px-2 py-1 rounded-lg">
-              +12% <ArrowUpRight size={12} />
-            </span>
-          </div>
-          <h3 className="text-gray-400 text-sm font-bold uppercase tracking-wider">Total Colleges</h3>
-          <p className="text-3xl font-black mt-1" style={{ color: brandDark }}>2,450</p>
-        </div>
+      {/* 2x2 Stats Grid */}
+      <div className="max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Row 1: Colleges & Leads */}
+        <StatCard
+          title="TOTAL COLLEGES"
+          value={stats?.colleges || 0}
+          icon={<GraduationCap size={28} />}
+          bgColor="bg-indigo-50"
+          iconColor="text-[#1a237e]"
+          borderColor="hover:border-indigo-200"
+        />
 
-        <div className="bg-white p-6 rounded-[2rem] border border-purple-50 shadow-sm">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-blue-50 rounded-2xl text-blue-600">
-              <Users size={24} />
-            </div>
-            <span className="text-green-500 text-xs font-bold flex items-center bg-green-50 px-2 py-1 rounded-lg">
-              +5% <ArrowUpRight size={12} />
-            </span>
-          </div>
-          <h3 className="text-gray-400 text-sm font-bold uppercase tracking-wider">Active Students</h3>
-          <p className="text-3xl font-black mt-1" style={{ color: brandDark }}>35,200</p>
-        </div>
+        <StatCard
+          title="TOTAL LEADS"
+          value={stats?.leads || 0}
+          icon={<UserPlus size={28} />}
+          bgColor="bg-purple-50"
+          iconColor="text-[#6739b7]"
+          borderColor="hover:border-purple-200"
+        />
 
-        <div className="bg-white p-6 rounded-[2rem] border border-purple-50 shadow-sm">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-orange-50 rounded-2xl text-orange-600">
-              <FileText size={24} />
-            </div>
-            <span className="text-red-500 text-xs font-bold flex items-center bg-red-50 px-2 py-1 rounded-lg">
-              -2% <ArrowUpRight size={12} className="rotate-90" />
-            </span>
-          </div>
-          <h3 className="text-gray-400 text-sm font-bold uppercase tracking-wider">New Applications</h3>
-          <p className="text-3xl font-black mt-1" style={{ color: brandDark }}>1,280</p>
-        </div>
+        {/* Row 2: Blogs & Courses */}
+        <StatCard
+          title="TOTAL BLOGS"
+          value={stats?.blogs || 0}
+          icon={<Newspaper size={28} />}
+          bgColor="bg-orange-50"
+          iconColor="text-orange-600"
+          borderColor="hover:border-orange-200"
+        />
 
-        <div className="bg-white p-6 rounded-[2rem] border border-purple-50 shadow-sm">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-green-50 rounded-2xl text-green-600">
-              <TrendingUp size={24} />
-            </div>
-            <span className="text-green-500 text-xs font-bold flex items-center bg-green-50 px-2 py-1 rounded-lg">
-              +18% <ArrowUpRight size={12} />
-            </span>
-          </div>
-          <h3 className="text-gray-400 text-sm font-bold uppercase tracking-wider">Conversion Rate</h3>
-          <p className="text-3xl font-black mt-1" style={{ color: brandDark }}>64%</p>
-        </div>
+        <StatCard
+          title="ACTIVE COURSES"
+          value={stats?.courses || 0}
+          icon={<BookOpen size={28} />}
+          bgColor="bg-emerald-50"
+          iconColor="text-emerald-600"
+          borderColor="hover:border-emerald-200"
+        />
       </div>
-
-      {/* Recent Activity Table */}
-      
     </div>
   );
-}
+};
+
+// UI-Enhanced StatCard
+const StatCard = ({ title, value, icon, bgColor, iconColor, borderColor }) => (
+  <div className={`group bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm transition-all duration-300 ${borderColor} hover:shadow-xl hover:-translate-y-1 flex items-center gap-6`}>
+    {/* Left: Icon Side */}
+    <div className={`p-5 ${bgColor} ${iconColor} rounded-3xl group-hover:scale-110 transition-transform duration-300`}>
+      {icon}
+    </div>
+    
+    {/* Right: Content Side */}
+    <div className="flex-1">
+      <h3 className="text-gray-400 text-xs font-black uppercase tracking-widest mb-1">
+        {title}
+      </h3>
+      <div className="flex items-baseline gap-2">
+        <p className="text-4xl font-black text-[#1a237e] tracking-tight">
+          {value.toLocaleString()}
+        </p>
+        <ArrowUpRight size={18} className={`${iconColor} opacity-40 group-hover:opacity-100 transition-opacity`} />
+      </div>
+    </div>
+  </div>
+);
 
 export default Dashboard;

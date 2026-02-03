@@ -12,7 +12,7 @@ import path from "path";
 import leadRoutes from "./routes/lead.route.js";
 import auditRoutes from "./routes/audit.routes.js";
 import indiaRoutes from "./routes/india.routes.js";
-
+import dashboardRoutes from "./routes/dashboard.route.js";
 
 
 // import indexRoutes from './routes/index.js';
@@ -47,6 +47,7 @@ app.use("/v1/blog", blogRoutes);
 app.use("/v1/leads", leadRoutes);
 app.use("/v1/audit-logs", auditRoutes);
 app.use("/v1/college/india", indiaRoutes);
+app.use("/v1/dashboard", dashboardRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "/uploads")));
 
 
