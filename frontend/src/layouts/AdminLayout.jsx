@@ -15,9 +15,8 @@ const AdminLayout = () => {
       />
 
       <div
-        className={`flex-1 transition-all duration-300 ${
-          isSidebarOpen ? "lg:ml-72" : "lg:ml-20"
-        }`}
+        className={`flex-1 transition-all duration-300 ${isSidebarOpen ? "lg:ml-72" : "lg:ml-20"
+          }`}
       >
         <AdminNavbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
         <main className="p-6">

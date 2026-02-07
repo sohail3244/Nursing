@@ -1,14 +1,10 @@
 import { createLead, getLeads, deleteLead } from "../services/lead.service.js";
 import { createAuditLog } from "../services/audit.service.js";
 
-/* =========================
-   ➕ ADD LEAD
-========================= */
 export const addLead = async (req, res) => {
   try {
     await createLead(req.body);
 
-    // ✅ AUDIT LOG
     await createAuditLog({
       action: "CREATE",
       module: "Lead",
@@ -37,9 +33,6 @@ export const addLead = async (req, res) => {
   }
 };
 
-/* =========================
-   📄 GET ALL LEADS
-========================= */
 export const getAllLeads = async (req, res) => {
   try {
     const data = await getLeads();
@@ -52,14 +45,10 @@ export const getAllLeads = async (req, res) => {
   }
 };
 
-/* =========================
-   ❌ DELETE LEAD
-========================= */
 export const removeLead = async (req, res) => {
   try {
     await deleteLead(req.params.id);
 
-    // ✅ AUDIT LOG
     await createAuditLog({
       action: "DELETE",
       module: "Lead",

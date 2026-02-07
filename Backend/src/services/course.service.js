@@ -2,7 +2,6 @@ import { eq } from "drizzle-orm";
 import { coursesTable } from "../models/course.schema.js";
 import { db } from "../database/db.js";
 
-// CREATE
 export async function createCourse(data) {
   const existing = await db
     .select()
@@ -16,12 +15,10 @@ export async function createCourse(data) {
   return await db.insert(coursesTable).values(data);
 }
 
-// GET ALL
 export async function getCourses() {
   return await db.select().from(coursesTable);
 }
 
-// UPDATE
 export async function updateCourse(id, data) {
   return await db
     .update(coursesTable)
@@ -29,7 +26,6 @@ export async function updateCourse(id, data) {
     .where(eq(coursesTable.id, id));
 }
 
-// DELETE
 export async function deleteCourse(id) {
   return await db
     .delete(coursesTable)

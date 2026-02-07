@@ -14,7 +14,7 @@ const PopularColleges = () => {
   return (
     <section className="bg-white py-16 px-6 md:px-12 font-sans">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2

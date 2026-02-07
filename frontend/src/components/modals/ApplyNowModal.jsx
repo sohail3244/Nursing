@@ -201,8 +201,8 @@ function ApplyNowModal({ isOpen, onClose }) {
               onChange={handleChange}
               disabled={!formData.course || !formData.city}
               className={`${inputClass} ${!formData.course || !formData.city
-                  ? "opacity-50 cursor-not-allowed bg-gray-100"
-                  : ""
+                ? "opacity-50 cursor-not-allowed bg-gray-100"
+                : ""
                 }`}
             >
               <option value="">

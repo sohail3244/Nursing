@@ -1,9 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios.config";
 
-/* ==============================
-   ✅ GET ALL COURSES (PUBLIC)
-================================ */
 export const useCourses = () => {
   return useQuery({
     queryKey: ["courses"],
@@ -14,10 +11,6 @@ export const useCourses = () => {
   });
 };
 
-
-/* ==============================
-   ✅ ADD COURSE (ADMIN)
-================================ */
 export const useAddCourse = () => {
   const queryClient = useQueryClient();
 
@@ -33,9 +26,6 @@ export const useAddCourse = () => {
 };
 
 
-/* ==============================
-   ✅ UPDATE COURSE (ADMIN)
-================================ */
 export const useUpdateCourse = () => {
   const queryClient = useQueryClient();
 
@@ -50,10 +40,6 @@ export const useUpdateCourse = () => {
   });
 };
 
-
-/* ==============================
-   ✅ DELETE COURSE (ADMIN)
-================================ */
 export const useDeleteCourse = () => {
   const queryClient = useQueryClient();
 

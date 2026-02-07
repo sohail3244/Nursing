@@ -49,23 +49,23 @@ const PopularCourses = () => {
 
         {/* Grid using Reusable Card Component */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-       {isLoading ? (
-  <div className="text-center text-gray-400">Loading courses...</div>
-) : (
-  popularCourses.map((course) => (
-    <div
-      key={course.id}
-      onClick={() => navigate(course.path)}
-      className="cursor-pointer"
-    >
-      <CourseCard
-        course={course}
-        brandDark={brandDark}
-        brandPurple={brandPurple}
-      />
-    </div>
-  ))
-)}
+          {isLoading ? (
+            <div className="text-center text-gray-400">Loading courses...</div>
+          ) : (
+            popularCourses.map((course) => (
+              <div
+                key={course.id}
+                onClick={() => navigate(course.path)}
+                className="cursor-pointer"
+              >
+                <CourseCard
+                  course={course}
+                  brandDark={brandDark}
+                  brandPurple={brandPurple}
+                />
+              </div>
+            ))
+          )}
 
         </div>
       </div>

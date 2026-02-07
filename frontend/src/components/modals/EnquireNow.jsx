@@ -16,7 +16,7 @@ const EnquireNow = () => {
     }
 
     const payload = {
-      phone,          // ✅ only phone
+      phone,          
     };
 
     mutate(payload, {
@@ -59,7 +59,7 @@ const EnquireNow = () => {
                   onClick={handleSubmit}
                   className="flex items-center gap-2"
                 >
-                  {isLoading ? "Sending..." : <> <Check size={18}/> Submit </>}
+                  {isLoading ? "Sending..." : <> <Check size={18} /> Submit </>}
                 </Button>
               </div>
             </div>

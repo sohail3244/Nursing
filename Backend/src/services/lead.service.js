@@ -3,7 +3,6 @@ import { leadsTable } from "../models/lead.schema.js";
 import { eq } from "drizzle-orm";
 
 export const createLead = async (data) => {
-  // 🔍 Duplicate check (phone)
   const existing = await db
     .select()
     .from(leadsTable)

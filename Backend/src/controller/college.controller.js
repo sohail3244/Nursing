@@ -13,10 +13,6 @@ import { sql } from "drizzle-orm";
 import { collegesTable } from "../models/college.schema.js";
 import { coursesTable } from "../models/course.schema.js";
 
-
-/* ================================
-   ➕ CREATE COLLEGE
-================================ */
 export const addCollege = async (req, res) => {
   try {
     const {
@@ -78,7 +74,6 @@ export const addCollege = async (req, res) => {
       youtubeVideo,
     });
 
-    // ✅ AUDIT
     await createAuditLog({
       action: "CREATE",
       module: "College",
@@ -97,9 +92,6 @@ export const addCollege = async (req, res) => {
   }
 };
 
-/* ================================
-   📄 GET ALL COLLEGES
-================================ */
 export const getColleges = async (req, res) => {
   try {
     const colleges = await getAllCollegesService();
@@ -109,9 +101,6 @@ export const getColleges = async (req, res) => {
   }
 };
 
-/* ================================
-   📄 GET SINGLE COLLEGE
-================================ */
 export const getCollegeById = async (req, res) => {
   try {
     const college = await getCollegeByIdService(req.params.id);
@@ -124,9 +113,6 @@ export const getCollegeById = async (req, res) => {
   }
 };
 
-/* ================================
-   ✏️ UPDATE COLLEGE
-================================ */
 export const editCollege = async (req, res) => {
   try {
     const thumbnail =
@@ -144,15 +130,12 @@ export const editCollege = async (req, res) => {
   updatedData.gallery = gallery;
 }
 
-
-    // ✅ Facilities (safe parse)
 if (req.body.facilities) {
   updatedData.facilities = Array.isArray(req.body.facilities)
     ? req.body.facilities
     : JSON.parse(req.body.facilities);
 }
 
-// ✅ Course IDs (safe parse)
 if (req.body.courseIds) {
   updatedData.courseIds = Array.isArray(req.body.courseIds)
     ? req.body.courseIds
@@ -176,9 +159,7 @@ if (req.body.courseIds) {
 
 
 
-/* ================================
-   ❌ DELETE COLLEGE
-================================ */
+
 export const deleteCollege = async (req, res) => {
   try {
     await deleteCollegeService(req.params.id);
@@ -196,9 +177,7 @@ export const deleteCollege = async (req, res) => {
   }
 };
 
-/* ================================
-   🎓 GET COLLEGE COURSES
-================================ */
+
 export const getCollegeCourses = async (req, res) => {
   try {
     const courses = await getCollegeCoursesService(req.params.id);
@@ -251,12 +230,15 @@ export const searchColleges = async (req, res) => {
       .from(collegesTable)
       .where(sql.join(conditions, sql` AND `));
 
-    // ✅ STEP-3: AUDIT LOG ONLY IF RESULT FOUND
-    if (colleges.length > 0) {
+  
+    if (q) {
+      const description =
+        `Searched  "${q}" (${colleges.length} results found)`;
+
       await createAuditLog({
         action: "SEARCH",
         module: "College",
-        description: `College search → q:${q || "-"} | state:${state || "-"} | city:${city || "-"}`,
+        description,
         userAgent: req.headers["user-agent"],
       });
     }
@@ -277,7 +259,6 @@ export const searchColleges = async (req, res) => {
 
 
 
-// 🎓 GET COLLEGES BY COURSE
 export const getCollegesByCourse = async (req, res) => {
   try {
     const { course } = req.query;

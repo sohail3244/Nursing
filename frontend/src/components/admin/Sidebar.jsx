@@ -1,10 +1,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-    LayoutDashboard, 
-    GraduationCap, 
-    BookOpen, 
-    Users,  
+import {
+    LayoutDashboard,
+    GraduationCap,
+    BookOpen,
+    Users,
     ChevronLeft,
     LogOut,
     Newspaper,
@@ -45,7 +45,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
                 <div className={`h-20 flex items-center justify-between px-4 border-b border-gray-50 mb-4`}>
                     <div className="flex items-center gap-3 overflow-hidden">
                         {/* Iconic Logo */}
-                        
+
                         {isOpen && (
                             <div className="flex flex-col leading-none whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
                                 <span className="text-lg font-black text-gray-800 tracking-tight">myNursing</span>
@@ -64,7 +64,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
 
                 {/* Main Navigation */}
                 <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 space-y-8 custom-scrollbar">
-                    
+
                     {/* General Group */}
                     <div className="space-y-1">
                         {isOpen && <p className="px-4 mb-4 text-[10px] uppercase font-black text-gray-400 tracking-[0.2em] animate-in fade-in duration-500">General</p>}
@@ -82,14 +82,8 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
                             </NavLink>
                         ))}
                     </div>
-
-                    {/* Management Group */}
-                    
                 </div>
-
-                {/* Bottom User Profile Section */}
-                
-            </aside> 
+            </aside>
         </>
     );
 };

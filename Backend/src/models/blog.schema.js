@@ -10,7 +10,6 @@ export const blogsTable = mysqlTable(
 
     title: varchar("title", { length: 255 }).notNull(),
 
-    // ✅ NEW FIELD
     code: varchar("code", { length: 100 }).notNull(),
 
     description: text("description").notNull(),

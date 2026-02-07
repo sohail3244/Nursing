@@ -46,7 +46,7 @@ const Contact = () => {
             </section>
 
             {/* 2. Form Section - Background tint for section separation */}
-            <main className="bg-[#fbf9ff] py-16"> 
+            <main className="bg-[#fbf9ff] py-16">
                 <div className="max-w-7xl mx-auto px-6">
                     <ContactForm />
                 </div>

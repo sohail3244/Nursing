@@ -168,16 +168,16 @@ function CollegeModal({
     }
 
     Object.entries(processedData).forEach(([key, value]) => {
-  if (value === undefined || value === null || value === "") return;
+      if (value === undefined || value === null || value === "") return;
 
-  if (Array.isArray(value)) {
-    value.forEach((item) => {
-      data.append(`${key}[]`, item);
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          data.append(`${key}[]`, item);
+        });
+      } else {
+        data.append(key, value);
+      }
     });
-  } else {
-    data.append(key, value);
-  }
-});
 
 
     if (selectedThumbnail) {
@@ -272,11 +272,10 @@ function CollegeModal({
                 key={course.id}
                 type="button"
                 onClick={() => handleCourseToggle(course.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                  selectedCourses.includes(course.id)
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${selectedCourses.includes(course.id)
                     ? "bg-[#6739b7] text-white border-[#6739b7] shadow-lg shadow-purple-200"
                     : "bg-white text-gray-500 border-gray-200 hover:border-purple-300 hover:text-purple-600"
-                }`}
+                  }`}
               >
                 {course.name}
               </button>
@@ -438,7 +437,7 @@ function CollegeModal({
                 onChange={handleInputChange}
                 className="input-style"
               >
-                
+
                 <option value="">
                   {loadingCities ? "Loading cities..." : "Select City"}
                 </option>

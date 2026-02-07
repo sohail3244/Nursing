@@ -15,7 +15,6 @@ export const leadsTable = mysqlTable("leads", {
   course: varchar("course", { length: 150 }),
   college: varchar("college", { length: 150 }),
 
-  // ✅ optional message
   message: varchar("message", { length: 500 }),
 
   createdAt: timestamp("created_at").defaultNow(),

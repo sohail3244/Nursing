@@ -35,7 +35,7 @@ const StatsCard = ({ number, label, description }) => {
   return (
     <div className="flex flex-col items-center text-center group p-4">
       {/* Animated Stat Number */}
-      <h2 
+      <h2
         className="text-4xl md:text-5xl font-black mb-3"
         style={{ color: brandPurple }}
       >
@@ -43,7 +43,7 @@ const StatsCard = ({ number, label, description }) => {
       </h2>
 
       {/* Stat Label */}
-      <h3 
+      <h3
         className="text-xl md:text-2xl font-extrabold mb-4"
         style={{ color: brandDark }}
       >
@@ -54,7 +54,7 @@ const StatsCard = ({ number, label, description }) => {
       <p className="text-gray-500 text-sm md:text-xs leading-relaxed max-w-[220px]">
         {description}
       </p>
-      
+
     </div>
   );
 };

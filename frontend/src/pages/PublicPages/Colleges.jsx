@@ -20,7 +20,7 @@ const Colleges = () => {
   const [selectedState, setSelectedState] = React.useState(null);
   const [selectedCity, setSelectedCity] = React.useState(null);
   const [params] = useSearchParams();
-  const search = params.get("search");
+  const search = params.get("q");
   const state = params.get("state");
   const city = params.get("city");
   const course = params.get("course");
@@ -144,20 +144,11 @@ const Colleges = () => {
             </button>
           </div>
         )}
-
-
-
-
-
         <div className="mb-8 border-l-4 border-[#6739b7] pl-4">
           <h2 className="text-2xl font-bold text-[#1a237e]">
             Available Nursing Colleges
           </h2>
         </div>
-
-
-
-
         {isError && (
           <div className="bg-red-50 text-red-600 p-6 rounded-xl border border-red-100 flex items-center justify-center gap-3">
             <AlertCircle className="h-5 w-5" />
@@ -191,21 +182,21 @@ const Colleges = () => {
         {/* Data Grid */}
         {!isLoading && collegesList.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {collegesList.map((college) => (
-    <CollegeCard
-      key={college.id}
-      brandDark="#1a237e"
-      college={{
-        id: college.id,
-        name: college.name,
-        image: `${import.meta.env.VITE_API_BASE_URL}/uploads/colleges/${college.thumbnail}`,
-        location: `${college.city}, ${college.state}`,
-        year: college.establishedYear || "N/A",
-        type: college.sector || "Nursing College",
-        description: college.description || "No description available",
-      }}
-    />
-  ))}
+            {collegesList.map((college) => (
+              <CollegeCard
+                key={college.id}
+                brandDark="#1a237e"
+                college={{
+                  id: college.id,
+                  name: college.name,
+                  image: `${import.meta.env.VITE_API_BASE_URL}/uploads/colleges/${college.thumbnail}`,
+                  location: `${college.city}, ${college.state}`,
+                  year: college.establishedYear || "N/A",
+                  type: college.sector || "Nursing College",
+                  description: college.description || "No description available",
+                }}
+              />
+            ))}
           </div>
         )}
 

@@ -3,7 +3,6 @@ import { eq, inArray } from "drizzle-orm";
 import { collegesTable } from "../models/college.schema.js";
 import { coursesTable } from "../models/course.schema.js";
 
-/* CREATE */
 export const createCollegeService = async (data) => {
   const [existing] = await db
     .select()
@@ -18,12 +17,10 @@ export const createCollegeService = async (data) => {
   return data;
 };
 
-/* GET ALL */
 export const getAllCollegesService = async () => {
   return await db.select().from(collegesTable);
 };
 
-/* GET BY ID */
 export const getCollegeByIdService = async (id) => {
   const [college] = await db
     .select()
@@ -33,7 +30,6 @@ export const getCollegeByIdService = async (id) => {
   return college;
 };
 
-/* UPDATE */
 export const updateCollegeService = async (id, data) => {
   return await db
     .update(collegesTable)
@@ -41,14 +37,12 @@ export const updateCollegeService = async (id, data) => {
     .where(eq(collegesTable.id, id));
 };
 
-/* DELETE */
 export const deleteCollegeService = async (id) => {
   return await db
     .delete(collegesTable)
     .where(eq(collegesTable.id, id));
 };
 
-/* GET COURSES */
 export const getCollegeCoursesService = async (id) => {
   const [college] = await db
     .select()

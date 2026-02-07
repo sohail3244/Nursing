@@ -6,9 +6,6 @@ import { blogsTable } from "../models/blog.schema.js";
 import { eq } from "drizzle-orm";
 import { createAuditLog } from "../services/audit.service.js";
 
-/* ==============================
-   ➕ ADD BLOG
-============================== */
 export const addBlog = async (req, res) => {
   try {
     const image = req.file ? req.file.filename : null;
@@ -20,7 +17,6 @@ export const addBlog = async (req, res) => {
       image,
     });
 
-    // ✅ AUDIT LOG
     await createAuditLog({
       action: "CREATE",
       module: "Blog",
@@ -49,9 +45,6 @@ export const addBlog = async (req, res) => {
   }
 };
 
-/* ==============================
-   📄 GET ALL BLOGS
-============================== */
 export const getAllBlogs = async (req, res) => {
   try {
     const blogs = await getBlogs();
@@ -64,9 +57,6 @@ export const getAllBlogs = async (req, res) => {
   }
 };
 
-/* ==============================
-   ✏️ UPDATE BLOG
-============================== */
 export const updateBlog = async (req, res) => {
   try {
     const image = req.file?.filename;
@@ -84,7 +74,6 @@ export const updateBlog = async (req, res) => {
       .set(data)
       .where(eq(blogsTable.id, req.params.id));
 
-    // ✅ AUDIT LOG
     await createAuditLog({
       action: "UPDATE",
       module: "Blog",
@@ -110,9 +99,6 @@ export const updateBlog = async (req, res) => {
   }
 };
 
-/* ==============================
-   ❌ DELETE BLOG
-============================== */
 export const removeBlog = async (req, res) => {
   try {
     const blog = await db
@@ -127,7 +113,6 @@ export const removeBlog = async (req, res) => {
       });
     }
 
-    // Delete image if exists
     if (blog[0].image) {
       const imgPath = path.join("uploads/blogs", blog[0].image);
       if (fs.existsSync(imgPath)) {
@@ -137,7 +122,6 @@ export const removeBlog = async (req, res) => {
 
     await deleteBlog(req.params.id);
 
-    // ✅ AUDIT LOG
     await createAuditLog({
       action: "DELETE",
       module: "Blog",

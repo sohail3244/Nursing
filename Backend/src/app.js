@@ -19,7 +19,7 @@ import dashboardRoutes from "./routes/dashboard.route.js";
 
 const app = express();
 
-// ---------- HEALTH (NO TENANT) ----------
+// HEALTH
 app.get('/v1/health', (req, res) => {
   res.status(200).send('OK');
 });
@@ -37,7 +37,7 @@ app.use(
 );
 
 
-// ---------- API ----------
+//    API
 // app.use('/v1', indexRoutes);
 app.use('/v1/auth', authRoutes); 
 app.use('/v1/user', userRoutes); 

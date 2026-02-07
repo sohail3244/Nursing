@@ -7,14 +7,10 @@ import {
 
 import { createAuditLog } from "../services/audit.service.js";
 
-/* ============================
-   ➕ ADD COURSE
-============================ */
 export async function addCourse(req, res) {
   try {
     await createCourse(req.body);
 
-    // ✅ AUDIT LOG
     await createAuditLog({
       action: "CREATE",
       module: "Course",
@@ -40,9 +36,6 @@ export async function addCourse(req, res) {
   }
 }
 
-/* ============================
-   📄 GET ALL COURSES
-============================ */
 export async function getAllCourses(req, res) {
   try {
     const data = await getCourses();
@@ -56,9 +49,6 @@ export async function getAllCourses(req, res) {
   }
 }
 
-/* ============================
-   ✏️ UPDATE COURSE
-============================ */
 export async function editCourse(req, res) {
   try {
     await updateCourse(req.params.id, req.body);
@@ -88,9 +78,6 @@ export async function editCourse(req, res) {
   }
 }
 
-/* ============================
-   ❌ DELETE COURSE
-============================ */
 export async function removeCourse(req, res) {
   try {
     await deleteCourse(req.params.id);

@@ -11,10 +11,8 @@ import { verifyToken, isAdmin } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-// Public lead form
 router.post("/", validate(createLeadSchema), addLead);
 
-// Admin
 router.get("/", verifyToken, isAdmin, getAllLeads);
 router.delete("/:id", verifyToken, isAdmin, removeLead);
 

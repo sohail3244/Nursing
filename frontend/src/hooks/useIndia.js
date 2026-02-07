@@ -1,9 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "../lib/axios.config";
 
-/* =========================
-   🇮🇳 GET ALL STATES
-========================= */
 export const useIndiaStates = () => {
   return useQuery({
     queryKey: ["india-states"],
@@ -14,9 +11,6 @@ export const useIndiaStates = () => {
   });
 };
 
-/* =========================
-   🏙️ GET CITIES BY STATE
-========================= */
 export const useIndiaCities = (state) => {
   return useQuery({
     queryKey: ["india-cities", state],

@@ -37,8 +37,6 @@ const ViewBlog = () => {
           >
             <ChevronLeft size={20} /> Back to Blogs
           </button>
-
-          
         </div>
       </div>
 

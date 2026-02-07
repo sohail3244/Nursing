@@ -25,7 +25,7 @@ function App() {
       />
     <Routes>
       
-      {/* 🌐 PUBLIC ROUTES */}
+      {/*  PUBLIC ROUTES */}
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="youtube-ad" element={<YoutubeAd />} />
@@ -41,7 +41,7 @@ function App() {
         <Route path="/blog/:id" element={<ViewBlog />} />
       </Route>
 
-      {/* 🔐 ADMIN ROUTES */}
+      {/*  ADMIN ROUTES */}
       <Route path="/admin/*" element={<AdminRoutes />} />
     </Routes>
     </>

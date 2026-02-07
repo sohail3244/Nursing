@@ -60,7 +60,7 @@ function SearchCollegeCard() {
             </select>
 
             <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-              
+
             </div>
           </div>
 
@@ -82,7 +82,7 @@ function SearchCollegeCard() {
             </select>
 
             <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-             
+
             </div>
           </div>
 

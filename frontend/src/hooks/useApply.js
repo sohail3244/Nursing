@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "../lib/axios.config";
 
-// ✅ CREATE LEAD (Public Form)
 export const useApply = () => {
   return useMutation({
     mutationFn: async (data) => {
@@ -11,7 +10,6 @@ export const useApply = () => {
   });
 };
 
-// ✅ GET ALL LEADS (Admin Panel)
 export const useLeads = () => {
   return useQuery({
     queryKey: ["leads"],

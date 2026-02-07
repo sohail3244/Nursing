@@ -26,17 +26,17 @@ function Leads() {
   const { data: coursesData } = useCourses();
   const { data: collegesData } = useColleges();
   const filteredLeads = leads?.data
-  ?.filter((lead) => {
-    const term = searchTerm.toLowerCase();
-    return (
-      (lead.name?.toLowerCase() || "").includes(term) ||
-      (lead.phone || "").includes(term) ||
-      (lead.email?.toLowerCase() || "").includes(term) ||
-      (lead.city?.toLowerCase() || "").includes(term) ||
-      (lead.state?.toLowerCase() || "").includes(term)
-    );
-  })
-  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    ?.filter((lead) => {
+      const term = searchTerm.toLowerCase();
+      return (
+        (lead.name?.toLowerCase() || "").includes(term) ||
+        (lead.phone || "").includes(term) ||
+        (lead.email?.toLowerCase() || "").includes(term) ||
+        (lead.city?.toLowerCase() || "").includes(term) ||
+        (lead.state?.toLowerCase() || "").includes(term)
+      );
+    })
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const totalPages = Math.ceil((filteredLeads?.length || 0) / ITEMS_PER_PAGE);
 
@@ -164,7 +164,7 @@ function Leads() {
                 ))}
               </tbody>
             </table>
-            
+
 
             {leads?.data?.length === 0 && (
               <div className="p-20 text-center text-gray-400">
@@ -175,15 +175,15 @@ function Leads() {
         )}
       </div>
       {totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={(page) => {
-                  setCurrentPage(page);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-              />
-            )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -2,9 +2,6 @@ import { eq } from "drizzle-orm";
 import { db } from "../database/db.js";
 import { coursesTable } from "../models/course.schema.js";
 
-/**
- * ✅ Check if course exists (for update / delete)
- */
 export const checkCourseExists = async (req, res, next) => {
   try {
     const { id } = req.params;

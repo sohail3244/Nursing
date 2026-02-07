@@ -1,11 +1,11 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 
-function Pagination({ 
-  currentPage, 
-  totalPages, 
-  onPageChange, 
-  maxVisiblePages = 5 
+function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+  maxVisiblePages = 5
 }) {
   if (totalPages <= 1) return null;
 

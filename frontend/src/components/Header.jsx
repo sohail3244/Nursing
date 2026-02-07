@@ -11,10 +11,9 @@ function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const navLinkStyles = ({ isActive }) =>
-    `font-medium transition-colors hover:text-[#6739b7] ${
-      isActive
-        ? `text-[#6739b7] border-b-2 border-[#6739b7] pb-1 font-bold`
-        : "text-gray-600"
+    `font-medium transition-colors hover:text-[#6739b7] ${isActive
+      ? `text-[#6739b7] border-b-2 border-[#6739b7] pb-1 font-bold`
+      : "text-gray-600"
     }`;
 
   const { data, isLoading } = useCourses();
@@ -202,24 +201,24 @@ function Header() {
               >
                 <div className="pl-4 space-y-1 border-l-2 border-purple-100">
                   {isLoading ? (
-  <div className="px-4 py-2 text-sm text-gray-400">
-    Loading courses...
-  </div>
-) : (
-  courses.map((course) => (
-    <NavLink
-      key={course.id}
-      to={`/colleges?course=${course.id}`}
-      onClick={() => {
-        setIsOpen(false);
-        setIsCourseOpen(false);
-      }}
-      className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#6739b7]"
-    >
-      {course.name}
-    </NavLink>
-  ))
-)}
+                    <div className="px-4 py-2 text-sm text-gray-400">
+                      Loading courses...
+                    </div>
+                  ) : (
+                    courses.map((course) => (
+                      <NavLink
+                        key={course.id}
+                        to={`/colleges?course=${course.id}`}
+                        onClick={() => {
+                          setIsOpen(false);
+                          setIsCourseOpen(false);
+                        }}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-[#6739b7]"
+                      >
+                        {course.name}
+                      </NavLink>
+                    ))
+                  )}
 
                 </div>
               </div>

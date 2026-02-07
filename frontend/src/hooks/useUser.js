@@ -12,7 +12,6 @@ export const useMe = () => {
   });
 };
 
-
 export const useUpdateMe = () => {
   const queryClient = useQueryClient();
 
@@ -20,7 +19,7 @@ export const useUpdateMe = () => {
     mutationFn: (data) => api.put("/user/me", data),
     onSuccess: () => {
       toast.success("Profile updated successfully");
-      queryClient.invalidateQueries(["me"]); // 🔥 REFRESH PROFILE
+      queryClient.invalidateQueries(["me"]);
     },
   });
 };

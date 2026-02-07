@@ -10,5 +10,5 @@ export const createCollegeSchema = z.object({
     required_error: "College type is required",
   }),
 
-  description: z.string().optional(), // ✅ NEW
+  description: z.string().optional(), 
 });

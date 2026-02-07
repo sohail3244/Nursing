@@ -92,7 +92,7 @@ const StatCard = ({ title, value, icon, bgColor, iconColor, borderColor }) => (
     <div className={`p-5 ${bgColor} ${iconColor} rounded-3xl group-hover:scale-110 transition-transform duration-300`}>
       {icon}
     </div>
-    
+
     {/* Right: Content Side */}
     <div className="flex-1">
       <h3 className="text-gray-400 text-xs font-black uppercase tracking-widest mb-1">

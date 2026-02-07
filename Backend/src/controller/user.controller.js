@@ -52,7 +52,6 @@ export const updateMyProfile = async (req, res) => {
       email,
     };
 
-    // Password change (optional)
     if (password) {
       updateData.password = await bcrypt.hash(password, 10);
     }

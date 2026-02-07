@@ -6,16 +6,16 @@ const FloatingActionButtons = () => {
   // Modal ki state
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const phoneNumber = "918233317530"; 
+  const phoneNumber = "918233317530";
   const whatsappMessage = "Hello, I am interested in Nursing Admission.";
 
   return (
     <>
       <div className="fixed bottom-6 left-0 right-0 z-[100] px-2 pointer-events-none">
         <div className="w-full mx-auto flex justify-between items-center pointer-events-auto">
-          
+
           {/* Left Side: WhatsApp Button */}
-          <a 
+          <a
             href={`https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -26,7 +26,7 @@ const FloatingActionButtons = () => {
           </a>
 
           {/* Right Side: Request Call Back - Ab ye Modal Open Karega */}
-          <button 
+          <button
             onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-1.5 bg-[#1a237e] hover:bg-[#0d144d] text-white px-3 py-2.5 rounded-full shadow-lg transition-all active:scale-95 cursor-pointer border-none"
           >
@@ -38,8 +38,8 @@ const FloatingActionButtons = () => {
 
       {/* Modal Component */}
       <ApplyNowModal
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </>
   );

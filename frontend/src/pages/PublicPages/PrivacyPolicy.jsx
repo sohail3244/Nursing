@@ -8,7 +8,7 @@ const PrivacyPolicy = () => {
     <div className="bg-white min-h-screen font-sans">
       {/* 1. Hero Banner Section */}
       <section className="relative w-full h-[250px] md:h-[300px] overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url('https://cdn.prod.website-files.com/66bd394eedeb9d6ee29898c6/682f5450a046c241920c1e6f_Three%20doctors%20standing%20side%20by%20side%2C%20crossing%20their%20arms.jpg')` }}
         >
@@ -39,7 +39,7 @@ const PrivacyPolicy = () => {
           <p className="text-sm text-gray-400 mb-8">Last updated: March 12, 2023</p>
 
           <p className="mb-10">
-            This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information 
+            This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information
             when You use the Service and tells You about Your privacy rights and how the law protects You.
           </p>
 
@@ -47,7 +47,7 @@ const PrivacyPolicy = () => {
             <h2 className="text-3xl font-extrabold mb-6" style={{ color: brandDark }}>Interpretation and Definitions</h2>
             <h3 className="text-xl font-bold mb-4" style={{ color: brandDark }}>Interpretation</h3>
             <p className="mb-6">
-              The words of which the initial letter is capitalized have meanings defined under the following conditions. 
+              The words of which the initial letter is capitalized have meanings defined under the following conditions.
               The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.
             </p>
 

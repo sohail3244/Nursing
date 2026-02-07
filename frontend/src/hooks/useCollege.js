@@ -1,9 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios.config";
 
-/* ===========================
-   GET ALL COLLEGES
-=========================== */
 export const useColleges = () => {
   return useQuery({
     queryKey: ["colleges"],
@@ -14,9 +11,6 @@ export const useColleges = () => {
   });
 };
 
-/* ===========================
-   GET SINGLE COLLEGE BY ID
-=========================== */
 export const useCollegeById = (id) => {
   return useQuery({
     queryKey: ["college", id],
@@ -24,20 +18,17 @@ export const useCollegeById = (id) => {
       const res = await api.get(`/college/${id}`);
       return res.data;
     },
-    enabled: !!id, // 🔥 important
+    enabled: !!id,
   });
 };
 
-/* ===========================
-   ADD COLLEGE
-=========================== */
 export const useAddCollege = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (formData) =>
       api.post("/college", formData, {
-        
+
       }),
 
     onSuccess: () => {
@@ -46,11 +37,6 @@ export const useAddCollege = () => {
   });
 };
 
-
-
-/* ===========================
-   UPDATE COLLEGE
-=========================== */
 export const useUpdateCollege = () => {
   const queryClient = useQueryClient();
 
@@ -64,10 +50,6 @@ export const useUpdateCollege = () => {
   });
 };
 
-
-/* ===========================
-   DELETE COLLEGE
-=========================== */
 export const useDeleteCollege = () => {
   const queryClient = useQueryClient();
 

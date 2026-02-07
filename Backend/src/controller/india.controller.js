@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// 🌍 All states + cities
 export const getIndiaStatesCities = async (req, res) => {
   try {
     const response = await axios.post(
@@ -20,7 +19,6 @@ export const getIndiaStatesCities = async (req, res) => {
   }
 };
 
-// 🏙️ Cities by state
 export const getCitiesByState = async (req, res) => {
   try {
     const { state } = req.query;

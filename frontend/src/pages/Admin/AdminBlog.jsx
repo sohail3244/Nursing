@@ -10,45 +10,45 @@ function AdminBlog() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
   const handleOpenModal = (blog = null) => {
-  setEditingBlog(blog); // ✔ only this
-  setIsModalOpen(true);
-};
-  
+    setEditingBlog(blog); // ✔ only this
+    setIsModalOpen(true);
+  };
+
 
   // Data Fetching
   const { data: blogs, isLoading } = useBlogs(page, 6);
-  
+
   // Mutations
   const addMutation = useAddBlog();
   const updateMutation = useUpdateBlog();
   const deleteMutation = useDeleteBlog();
 
- 
 
-const handleSubmit = (formData) => {
-  if (editingBlog) {
-    updateMutation.mutate(
-      {
-        id: editingBlog.id,
-        data: formData,
-      },
-      {
-        onSuccess: () => {
-          toast.success("Blog updated successfully");
-          setIsModalOpen(false);
-          setEditingBlog(null);
+
+  const handleSubmit = (formData) => {
+    if (editingBlog) {
+      updateMutation.mutate(
+        {
+          id: editingBlog.id,
+          data: formData,
         },
-      }
-    );
-  } else {
-    addMutation.mutate(formData, {
-      onSuccess: () => {
-        toast.success("Blog added successfully");
-        setIsModalOpen(false);
-      },
-    });
-  }
-};
+        {
+          onSuccess: () => {
+            toast.success("Blog updated successfully");
+            setIsModalOpen(false);
+            setEditingBlog(null);
+          },
+        }
+      );
+    } else {
+      addMutation.mutate(formData, {
+        onSuccess: () => {
+          toast.success("Blog added successfully");
+          setIsModalOpen(false);
+        },
+      });
+    }
+  };
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this blog post?")) {
@@ -67,12 +67,12 @@ const handleSubmit = (formData) => {
           <p className="text-sm text-gray-500 font-medium">Create and manage your portal's blog posts</p>
         </div>
         <button
-  type="button"   // ✅ VERY IMPORTANT
-  onClick={() => handleOpenModal()}
-  className="flex items-center gap-2 bg-[#6739b7] text-white px-5 py-2.5 rounded-xl hover:bg-[#5a32a3] transition-all shadow-lg font-bold"
->
-  <Plus size={20} /> Write New Post
-</button>
+          type="button"
+          onClick={() => handleOpenModal()}
+          className="flex items-center gap-2 bg-[#6739b7] text-white px-5 py-2.5 rounded-xl hover:bg-[#5a32a3] transition-all shadow-lg font-bold"
+        >
+          <Plus size={20} /> Write New Post
+        </button>
 
       </div>
 
@@ -88,8 +88,8 @@ const handleSubmit = (formData) => {
             <div key={blog.id} className="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
               <div className="relative h-48 bg-gray-100 overflow-hidden">
                 {blog.image ? (
-                  <img src={`${import.meta.env.VITE_API_BASE_URL}/uploads/blogs/${blog.image}`} 
-                  alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={`${import.meta.env.VITE_API_BASE_URL}/uploads/blogs/${blog.image}`}
+                    alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-300">
                     <ImageIcon size={48} />
@@ -99,13 +99,13 @@ const handleSubmit = (formData) => {
                   {blog.code}
                 </div>
               </div>
-              
+
               <div className="p-6">
                 <h3 className="font-black text-gray-800 text-lg line-clamp-1 mb-2">{blog.title}</h3>
                 <p className="text-gray-500 text-sm line-clamp-3 mb-6 leading-relaxed">
                   {blog.description}
                 </p>
-                
+
                 <div className="flex justify-between items-center pt-4 border-t border-gray-50">
                   <span className="text-[10px] font-bold text-gray-400 uppercase">
                     {new Date(blog.createdAt).toLocaleDateString()}
@@ -126,20 +126,20 @@ const handleSubmit = (formData) => {
       </div>
 
       <div className="mt-8">
-        <Pagination 
-          currentPage={page} 
-          totalPages={blogs?.totalPages || 1} 
-          onPageChange={setPage} 
+        <Pagination
+          currentPage={page}
+          totalPages={blogs?.totalPages || 1}
+          onPageChange={setPage}
         />
       </div>
 
-    <BlogModal
-  isOpen={isModalOpen}
-  onClose={() => setIsModalOpen(false)}
-  onSubmit={handleSubmit}
-  editingBlog={editingBlog}
-  isLoading={addMutation.isLoading || updateMutation.isLoading}
-/>
+      <BlogModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmit}
+        editingBlog={editingBlog}
+        isLoading={addMutation.isLoading || updateMutation.isLoading}
+      />
 
     </div>
   );

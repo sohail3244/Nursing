@@ -53,15 +53,16 @@ const StudentReviews = () => {
         <div className="flex animate-marquee group-active:pause-marquee">
           {infiniteReviews.map((review, index) => (
             <StudentReviewCard
-              key={`${review.id}-${index}`} 
-              review={review} 
-              brandDark={brandDark} 
+              key={`${review.id}-${index}`}
+              review={review}
+              brandDark={brandDark}
             />
           ))}
         </div>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes marquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }

@@ -1,9 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios.config";
 
-/* ==============================
-   ✅ GET ALL BLOGS (PUBLIC)
-================================ */
 export const useBlogs = () => {
   return useQuery({
     queryKey: ["blogs"],
@@ -14,16 +11,12 @@ export const useBlogs = () => {
   });
 };
 
-
-/* ==============================
-   ✅ ADD BLOG (ADMIN)
-================================ */
 export const useAddBlog = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data) => {
-      console.log("🔥 API HIT");
+      
       return api.post("/blog", data);
     },
     onSuccess: () => {
@@ -32,13 +25,6 @@ export const useAddBlog = () => {
   });
 };
 
-
-
-
-
-/* ==============================
-   ✅ DELETE BLOG (ADMIN)
-================================ */
 export const useDeleteBlog = () => {
   const queryClient = useQueryClient();
 
@@ -58,7 +44,6 @@ export const useUpdateBlog = () => {
 
   return useMutation({
     mutationFn: async ({ id, data }) => {
-      // ✅ data is already FormData
       return api.put(`/blog/${id}`, data);
     },
     onSuccess: () => {
@@ -67,7 +52,6 @@ export const useUpdateBlog = () => {
   });
 };
 
-// hooks/useBlog.js
 export const useBlogById = (id) => {
   return useQuery({
     queryKey: ["blog", id],

@@ -26,7 +26,6 @@ export function verifyToken(req, res, next) {
   }
 }
 
-// ✅ ADD THIS
 export function isAdmin(req, res, next) {
   if (req.user?.role !== "admin") {
     return res.status(403).json({

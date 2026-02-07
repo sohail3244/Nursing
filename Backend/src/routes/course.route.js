@@ -13,7 +13,6 @@ import { checkCourseExists } from "../middlewares/course.middleware.js";
 
 const router = Router();
 
-// ✅ CREATE COURSE
 router.post(
   "/",
   verifyToken,
@@ -22,10 +21,8 @@ router.post(
   addCourse
 );
 
-// ✅ GET ALL COURSES
 router.get("/", getAllCourses);
 
-// ✅ UPDATE COURSE
 router.put(
   "/:id",
   verifyToken,
@@ -34,7 +31,6 @@ router.put(
   editCourse
 );
 
-// ✅ DELETE COURSE
 router.delete(
   "/:id",
   verifyToken,

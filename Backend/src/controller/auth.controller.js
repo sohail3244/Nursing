@@ -5,7 +5,6 @@ export async function login(req, res) {
   try {
     const result = await loginService(req.body);
 
-    // 🍪 Token set
     res.cookie("token", result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -13,7 +12,6 @@ export async function login(req, res) {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    // ✅ SUCCESS LOGIN AUDIT
     await createAuditLog({
       action: "LOGIN",
       module: "Auth",
@@ -29,7 +27,6 @@ export async function login(req, res) {
 
   } catch (error) {
 
-    // ❌ FAILED LOGIN AUDIT
     await createAuditLog({
       action: "FAILED_LOGIN",
       module: "Auth",

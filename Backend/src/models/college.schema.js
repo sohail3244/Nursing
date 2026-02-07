@@ -22,7 +22,6 @@ export const collegesTable = mysqlTable(
 
     description: text("description"),
 
-    // ✅ ENUMS (IMPORTANT)
     sector: mysqlEnum("sector", ["Private", "Government", "Semi-Govt"])
       .default("Private"),
 
@@ -48,11 +47,9 @@ export const collegesTable = mysqlTable(
     experienceYears: int("experience_years"),
     studentsCount: int("students_count"),
 
-    // ✅ JSON FIELDS
     facilities: json("facilities").default([]),
     gallery: json("gallery").default([]),
 
-    // ✅ MEDIA
     thumbnail: varchar("thumbnail", { length: 255 }),
     youtubeVideo: text("youtube_video"),
 
@@ -60,7 +57,6 @@ export const collegesTable = mysqlTable(
     createdAt: timestamp("created_at").defaultNow(),
   },
 
-  // ✅ INDEXES (Very Important for performance)
   (table) => ({
     nameIndex: index("college_name_idx").on(table.name),
     cityIndex: index("college_city_idx").on(table.city),

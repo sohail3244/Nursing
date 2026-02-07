@@ -9,25 +9,23 @@ function YoutubeAd() {
   return (
     <section className="bg-white py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        
+
         {/* Section Heading */}
         <div className="mb-12 text-center lg:text-left">
           <h2 className="text-3xl md:text-4xl font-extrabold text-[#1a237e] mb-4">
             Discover Top Colleges for Nursing Admission
           </h2>
-          
         </div>
-
         <div className="flex flex-col lg:flex-row items-start gap-12">
-          
+
           {/* Left Side: Video Section */}
           <div className="w-full lg:w-1/2 relative group">
             <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl aspect-video bg-black">
               {!isPlaying ? (
                 /* Thumbnail Mode */
                 <div className="relative w-full h-full cursor-pointer" onClick={() => setIsPlaying(true)}>
-                  <img 
-                    src="https://img.youtube.com/vi/wLrtvxGWW_Q/maxresdefault.jpg" 
+                  <img
+                    src="https://img.youtube.com/vi/wLrtvxGWW_Q/maxresdefault.jpg"
                     alt="Nursing Portal Thumbnail"
                     className="w-full h-full object-cover opacity-80 transition-transform duration-500 group-hover:scale-105"
                   />
@@ -61,7 +59,7 @@ function YoutubeAd() {
             <p>
               Nursing education is a valuable investment that offers a wide range of career opportunities in the medical field, specifically in India.
             </p>
-            
+
             <p>
               <span className="font-semibold text-gray-800">Mynursingadmission.com</span> is a useful resource that provides free assistance in searching for nursing colleges in India.
             </p>

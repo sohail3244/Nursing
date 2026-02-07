@@ -182,13 +182,12 @@ function AdminColleges() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`text-[10px] px-2.5 py-1 rounded-full font-black uppercase tracking-tighter ${
-                          college.sector === "Government"
+                        className={`text-[10px] px-2.5 py-1 rounded-full font-black uppercase tracking-tighter ${college.sector === "Government"
                             ? "bg-green-100 text-green-700"
                             : college.sector === "Semi-Govt"
                               ? "bg-yellow-100 text-yellow-700"
                               : "bg-blue-100 text-blue-700"
-                        }`}
+                          }`}
                       >
                         {college.sector}
                       </span>

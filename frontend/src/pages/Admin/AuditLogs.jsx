@@ -6,24 +6,24 @@ import Pagination from '../../components/common/Pagination';
 const AuditLogs = () => {
   const { logs, loading, error } = useAuditLogs();
   const [searchTerm, setSearchTerm] = useState("");
-const ITEMS_PER_PAGE = 10;
+  const ITEMS_PER_PAGE = 10;
 
-const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredLogs = logs
-  .filter(
-    (log) =>
-      log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.module.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    .filter(
+      (log) =>
+        log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        log.module.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const totalPages = Math.ceil(filteredLogs.length / ITEMS_PER_PAGE);
 
-const paginatedLogs = filteredLogs.slice(
-  (currentPage - 1) * ITEMS_PER_PAGE,
-  currentPage * ITEMS_PER_PAGE
-);
+  const paginatedLogs = filteredLogs.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
 
   const getActionStyle = (action) => {
@@ -94,7 +94,7 @@ const paginatedLogs = filteredLogs.slice(
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-               {paginatedLogs.map((log) => (
+                {paginatedLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
                       <div className="flex items-center gap-2">
@@ -143,21 +143,21 @@ const paginatedLogs = filteredLogs.slice(
             </div>
           )}
 
-          
+
         </div>
       </div>
       {totalPages > 1 && (
-    <div className="mt-auto border-t border-gray-100 ">
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={(page) => {
-          setCurrentPage(page);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }}
-      />
-    </div>
-  )}
+        <div className="mt-auto border-t border-gray-100 ">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

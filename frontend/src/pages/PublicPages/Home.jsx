@@ -100,21 +100,21 @@ function Home() {
       <PopularColleges />
       <PopularCourses />
       <section className="w-full bg-white py-16 px-6 md:px-12 font-sans">
-      <div className="max-w-7xl mx-auto">
-        {/* Grid Container */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          {statsData.map((item, index) => (
-            <StatsCard 
-              key={index}
-              number={item.number}
-              label={item.label}
-              description={item.description}
-            />
-          ))}
+        <div className="max-w-7xl mx-auto">
+          {/* Grid Container */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            {statsData.map((item, index) => (
+              <StatsCard
+                key={index}
+                number={item.number}
+                label={item.label}
+                description={item.description}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
-      <InfoCard/>
+      </section>
+      <InfoCard />
       <StudentReviews />
     </div>
   );

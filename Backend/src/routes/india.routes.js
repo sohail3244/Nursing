@@ -6,10 +6,8 @@ import {
 
 const router = Router();
 
-// ✅ All states + cities
 router.get("/states-cities", getIndiaStatesCities);
 
-// ✅ Cities by state
 router.get("/cities", getCitiesByState);
 
 export default router;
